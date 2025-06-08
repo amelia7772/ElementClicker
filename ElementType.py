@@ -1,0 +1,24 @@
+from enum import IntEnum
+
+class ElementType(IntEnum):
+    wood = 0,
+    fire = 1,
+    rock = 2,
+    iron = 3,
+    bucket = 4,
+    water = 5,
+    iron_pickaxe = 6,
+    iron_hammer = 7,
+    iron_axe = 8,
+    iron_hoe = 9,
+    iron_shovel = 10,
+    iron_pitchfork = 11,
+    iron_sickle_scythe = 12,
+    dirt = 13,
+    gravil = 14,
+    sand = 15,
+    farmland = 16,
+    wheat_seeds = 17,
+    wheat_plant = 18,
+    harvested_wheat = 19,
+    heybale = 20
