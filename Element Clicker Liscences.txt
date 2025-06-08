@@ -1,9 +1,0 @@
-COPYRIGHT LISCENCE
-
-Element Clicker is a privately owned application pretaining to Emerald Craft, and shall only be used in its appplication form in personal non-commercial use, and shall not be redistributed without the explicit consent of Emerald Craft.
-
-You are allowed to disassembled, reverse engineer, or otherwise obtain the source code of Element Clicker without the explicit consent of Emerald Craft in so far as the usage of aforementioned source code is not public, nor commercial.
-
-For public or commercial use of the source code of Element Clicker, you must contact and obtain explicit consent from Emerald Craft.
-
-All copyrights reserved 2025.
