@@ -161,6 +161,7 @@ while True:
                     counter += 1
                 if quest_button.is_ui_element_pressed():
                     quest_button.set_ui_element_is_pressed(False)
+                    active_scene = Scene.quest_scene
             elif event.type == pygame.MOUSEWHEEL:
                 zoom_speed = event.y * 0.1
                 for element in elements.elements:
@@ -201,6 +202,7 @@ while True:
                     element.resize_elements(float(monitor_size[0]) / float(previous_size[0]), float(monitor_size[1]) / float(previous_size[1]),ratio_of_change_in_size)
                     
                 xp_bar.resize_xp_elements(screen, float(monitor_size[0]) / float(previous_size[0]), float(monitor_size[1]) / float(previous_size[1]))
+                quest_button.resize_ui_element(float(monitor_size[0]) / float(previous_size[0]), float(monitor_size[1]) / float(previous_size[1]))
                     
                 screen_size = screen.get_size()
                     
@@ -217,7 +219,8 @@ while True:
                     element.resize_elements(float(previous_size[0]) / float(monitor_size[0]), float(previous_size[1]) / float(monitor_size[1]),ratio_of_change_in_size)
                     
                 xp_bar.resize_xp_elements(screen, float(previous_size[0]) / float(monitor_size[0]), float(previous_size[1]) / float(monitor_size[1]))
-                    
+                quest_button.resize_ui_element(float(previous_size[0]) / float(monitor_size[0]), float(previous_size[1]) / float(monitor_size[1]))
+                
                 screen_size = screen.get_size()
                     
                 for element in elements.elements:
@@ -247,7 +250,6 @@ while True:
         
         elements.reevaluate_availability(xp_bar.level)  
         
-
         screen.fill((46, 46, 46))
         
         for x in range(0, screen.get_width(), background_image.get_width()):
@@ -263,6 +265,115 @@ while True:
         xp_bar.draw(screen)
         quest_button.draw(screen)
     elif active_scene == Scene.quest_scene:
-        pass
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                save_file = open("save.bin", 'wb')
+                buffer = bytes()
+                for element in elements.elements:
+                    buffer += struct.pack('1i', element.element_resource_amount)
+                buffer += struct.pack('2i', xp_bar.xp_amount, xp_bar.level)
+                for element in elements.elements:
+                    buffer += struct.pack('1b', element.is_available)
+                if save_file.writable():
+                    save_file.write(buffer)
+                save_file.close()
+                exit()
+            elif event.type == pygame.VIDEORESIZE and not pygame.display.is_fullscreen():
+                if event.size[0] >= 800 and event.size[1] >= 400:
+                    previous_size = screen_size
+                    screen = pygame.display.set_mode(event.size, pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
+
+                    ratio_of_change_in_size = max(screen.get_size()[0] / previous_size[0], screen.get_size()[1] / previous_size[1])
+                    
+                    for element in elements.elements:
+                        element.resize_elements(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]),ratio_of_change_in_size)
+                    
+                    xp_bar.resize_xp_elements(screen, float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
+                    quest_button.resize_ui_element(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
+                    
+                    screen_size = screen.get_size()
+                    
+                    for element in elements.elements:
+                        element.reposition_elements()
+                    
+                    xp_bar.reposition_xp_elements(screen)
+                    
+                else:
+                    previous_size = screen_size
+                    screen = pygame.display.set_mode((800,400), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
+                    ratio_of_change_in_size = max(screen.get_size()[0] / previous_size[0], screen.get_size()[1] / previous_size[1])
+                    
+                    for element in elements.elements:
+                        element.resize_elements(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]),ratio_of_change_in_size)
+                    
+                    xp_bar.resize_xp_elements(screen, float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
+                    quest_button.resize_ui_element(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
+                    
+                    screen_size = screen.get_size()
+                    
+                    for element in elements.elements:
+                        element.reposition_elements()
+                    
+                    xp_bar.reposition_xp_elements(screen)
+            elif event.type == pygame.MOUSEMOTION:
+                for element in elements.elements:
+                    mouse_position = pygame.mouse.get_pos()
+                    quest_button.is_highlighted = quest_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
+                    
+            elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
+                if quest_button.is_highlighted and not quest_button.is_ui_element_pressed():
+                    quest_button.set_ui_element_is_pressed(True)
+            
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if quest_button.is_ui_element_pressed():
+                    quest_button.set_ui_element_is_pressed(False)
+                    active_scene = Scene.main
+        
+        if pygame.key.get_pressed()[pygame.key.key_code("f11")]:
+            if not pygame.display.is_fullscreen():
+                previous_size = screen.get_size()
+                screen = pygame.display.set_mode(pygame.display.list_modes()[0])
+                screen = pygame.display.set_mode(pygame.display.list_modes()[0], pygame.FULLSCREEN)
+
+                ratio_of_change_in_size = max(monitor_size[0] / previous_size[0], monitor_size[1] / previous_size[1])
+                    
+                for element in elements.elements:
+                    element.resize_elements(float(monitor_size[0]) / float(previous_size[0]), float(monitor_size[1]) / float(previous_size[1]),ratio_of_change_in_size)
+                    
+                xp_bar.resize_xp_elements(screen, float(monitor_size[0]) / float(previous_size[0]), float(monitor_size[1]) / float(previous_size[1]))
+                quest_button.resize_ui_element(float(monitor_size[0]) / float(previous_size[0]), float(monitor_size[1]) / float(previous_size[1]))
+                    
+                screen_size = screen.get_size()
+                    
+                for element in elements.elements:
+                    element.reposition_elements()
+                    
+                xp_bar.reposition_xp_elements(screen)
+            else:
+                screen = pygame.display.set_mode(previous_size, pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
+
+                ratio_of_change_in_size = max(previous_size[0] / monitor_size[0], previous_size[1] / monitor_size[1])
+                    
+                for element in elements.elements:
+                    element.resize_elements(float(previous_size[0]) / float(monitor_size[0]), float(previous_size[1]) / float(monitor_size[1]),ratio_of_change_in_size)
+                    
+                xp_bar.resize_xp_elements(screen, float(previous_size[0]) / float(monitor_size[0]), float(previous_size[1]) / float(monitor_size[1]))
+                quest_button.resize_ui_element(float(previous_size[0]) / float(monitor_size[0]), float(previous_size[1]) / float(monitor_size[1]))
+                
+                screen_size = screen.get_size()
+                    
+                for element in elements.elements:
+                    element.reposition_elements()
+                    
+                xp_bar.reposition_xp_elements(screen)
+        
+        screen.fill((46, 46, 46))
+        
+        for x in range(0, screen.get_width(), background_image.get_width()):
+            for y in range(0, screen.get_height(), background_image.get_height()):
+                screen.blit(background_image, (x,y))
+        
+        quest_button.draw(screen)
     pygame.display.update()
     clock.tick(120)
