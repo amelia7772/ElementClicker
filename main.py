@@ -90,7 +90,7 @@ while True:
                     element.resize_elements(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]),ratio_of_change_in_size)
                 
                 xp_bar.resize_xp_elements(screen, float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
-                quest_button.resize_quest_button(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
+                quest_button.resize_ui_element(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
                 
                 screen_size = screen.get_size()
                 
@@ -108,7 +108,7 @@ while True:
                     element.resize_elements(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]),ratio_of_change_in_size)
                 
                 xp_bar.resize_xp_elements(screen, float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
-                quest_button.resize_quest_button(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
+                quest_button.resize_ui_element(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
                 
                 screen_size = screen.get_size()
                 
@@ -120,6 +120,7 @@ while True:
             for element in elements.elements:
                 mouse_position = pygame.mouse.get_pos()
                 element.is_highlighted = element._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
+                quest_button.is_highlighted = quest_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                 
         elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
             counter = 0
@@ -131,6 +132,8 @@ while True:
                         element._is_element_currently_being_crafted = True
                 counter += 1
             element_explanation_message_displayed = -1
+            if quest_button.is_highlighted and not quest_button.is_ui_element_pressed():
+                quest_button.set_ui_element_is_pressed(True)
         
         elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[2]:
             is_no_element_highlighted = True
@@ -152,6 +155,8 @@ while True:
                     if crafting_timers[counter] == -1:
                         element.set_element_is_pressed(False)
                 counter += 1
+            if quest_button.is_ui_element_pressed():
+                quest_button.set_ui_element_is_pressed(False)
         elif event.type == pygame.MOUSEWHEEL:
             zoom_speed = event.y * 0.1
             for element in elements.elements:
