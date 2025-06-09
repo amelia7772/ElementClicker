@@ -90,7 +90,7 @@ while True:
                     element.resize_elements(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]),ratio_of_change_in_size)
                 
                 xp_bar.resize_xp_elements(screen, float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
-                quest_button.resize_quest_button(screen, float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
+                quest_button.resize_quest_button(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
                 
                 screen_size = screen.get_size()
                 
@@ -108,7 +108,7 @@ while True:
                     element.resize_elements(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]),ratio_of_change_in_size)
                 
                 xp_bar.resize_xp_elements(screen, float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
-                quest_button.resize_quest_button(screen, float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
+                quest_button.resize_quest_button(float(screen.get_size()[0]) / float(previous_size[0]), float(screen.get_size()[1]) / float(previous_size[1]))
                 
                 screen_size = screen.get_size()
                 
