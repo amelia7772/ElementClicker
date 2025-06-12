@@ -33,15 +33,17 @@ class QuestScene:
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
                 if self.quest_button.is_highlighted and not self.quest_button.is_ui_element_pressed():
                     self.quest_button.set_ui_element_is_pressed(True)
-                if quest.quest_ui_icon.is_highlighted and not quest.quest_ui_icon.is_ui_element_pressed():
-                    quest.quest_ui_icon.is_highlighted.set_ui_element_is_pressed(True)
+                for quest in quests:
+                    if quest.quest_ui_icon.is_highlighted and not quest.quest_ui_icon.is_ui_element_pressed():
+                        quest.quest_ui_icon.is_highlighted.set_ui_element_is_pressed(True)
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 if self.quest_button.is_ui_element_pressed():
                     self.quest_button.set_ui_element_is_pressed(False)
                     self.active_scene = Scene.main
-                if quest.quest_ui_icon.is_ui_element_pressed():
-                    quest.quest_ui_icon.set_ui_element_is_pressed(False)
+                for quest in quests:
+                    if quest.quest_ui_icon.is_ui_element_pressed():
+                        quest.quest_ui_icon.set_ui_element_is_pressed(False)
         
         Screen.screen.fill((46, 46, 46))
         
