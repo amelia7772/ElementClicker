@@ -10,7 +10,7 @@ class QuestUiIcon(UiElement):
         if is_quest_available:
             super().__init__([background_image, self._available_quest_ui_icon], [(65,65), (50,50)], is_highlightable = True)
         else:
-            super().__init__([background_image, self._unavailable_quest_ui_icon], [(65,65), (50,50)], is_highlightable = True)
+            super().__init__([background_image, self._unavailable_quest_ui_icon], [(65,65), (50,50)], is_highlightable = False)
         icon_x = position[0] + ((background_image.get_width() / 2) - (ui_icon_image.get_width() / 2))
         icon_y = position[1] + ((background_image.get_height() / 2) - (ui_icon_image.get_height() / 2))
         self.position = position
@@ -24,9 +24,11 @@ class QuestUiIcon(UiElement):
         if is_quest_available:
             self.images[1] = self._available_quest_ui_icon
             self.images_original[1] = self._available_quest_ui_icon
+            self.set_highlightable(True)
         else:
             self.images[1] = self._unavailable_quest_ui_icon
             self.images_original[1] = self._unavailable_quest_ui_icon
+            self.set_highlightable(False)
     
     def update_position(self, new_position: tuple[int, int]):
         self.position = new_position
