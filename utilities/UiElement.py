@@ -35,10 +35,9 @@ class UiElement:
         self._is_ui_element_button_pressed = False
         self._is_ui_element_button_hovered_over = False
         
-        if is_highlightable:
-            self._hightliter_ellipse = Ellipse(0, 0, self.images[0].get_width(), self.images[0].get_height())
-            self._hightliter_ellipse_color = (150,150,150,100)
-            self.is_highlighted = False
+        self._hightliter_ellipse = Ellipse(0, 0, self.images[0].get_width(), self.images[0].get_height())
+        self._hightliter_ellipse_color = (150,150,150,100)
+        self.is_highlighted = False
 
     def scale_rect_without_changing_aspect_ratio(self, rect_size: tuple[float, float], original_rect_size: tuple[float, float], change_in_width: float, change_in_height: float):
         if rect_size[0] == 0 or rect_size[1] == 0:
