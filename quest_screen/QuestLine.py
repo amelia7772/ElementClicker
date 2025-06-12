@@ -17,7 +17,6 @@ class QuestLine:
         self.horizontal_margin = 100
         self.position_offset = (0,0)
         self.arrows_size = (4, 12, 8)
-        self.set_quest_completed(0, True)
         self.calculate_quests_positions_in_the_quest_line()
         self.set_position((200,125))
     
