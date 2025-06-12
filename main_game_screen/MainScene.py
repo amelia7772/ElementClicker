@@ -32,50 +32,9 @@ class MainScene:
 
         self.element_explanation_message_displayed = -1
     
-    def update(self, dt, monitor_size):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                self.save_manager.save_game()
-                exit()
-            elif event.type == pygame.VIDEORESIZE and not pygame.display.is_fullscreen():
-                if event.size[0] >= 800 and event.size[1] >= 400:
-                    self.previous_size = self.screen_size
-                    Screen.screen = pygame.display.set_mode(event.size, pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
-
-                    ratio_of_change_in_size = max(Screen.screen.get_size()[0] / self.previous_size[0], Screen.screen.get_size()[1] / self.previous_size[1])
-                    
-                    for element in elements.elements:
-                        element.resize_elements(float(Screen.screen.get_size()[0]) / float(self.previous_size[0]), float(Screen.screen.get_size()[1]) / float(self.previous_size[1]),ratio_of_change_in_size)
-                    
-                    xp_bar.resize_xp_elements(Screen.screen, float(Screen.screen.get_size()[0]) / float(self.previous_size[0]), float(Screen.screen.get_size()[1]) / float(self.previous_size[1]))
-                    self.quest_button.resize_ui_element(float(Screen.screen.get_size()[0]) / float(self.previous_size[0]), float(Screen.screen.get_size()[1]) / float(self.previous_size[1]))
-                    
-                    self.screen_size = Screen.screen.get_size()
-                    
-                    for element in elements.elements:
-                        element.reposition_elements()
-                    
-                    xp_bar.reposition_xp_elements(Screen.screen)
-                    
-                else:
-                    self.previous_size = self.screen_size
-                    Screen.screen = pygame.display.set_mode((800,400), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
-                    ratio_of_change_in_size = max(Screen.screen.get_size()[0] / self.previous_size[0], Screen.screen.get_size()[1] / self.previous_size[1])
-                    
-                    for element in elements.elements:
-                        element.resize_elements(float(Screen.screen.get_size()[0]) / float(self.previous_size[0]), float(Screen.screen.get_size()[1]) / float(self.previous_size[1]),ratio_of_change_in_size)
-                    
-                    xp_bar.resize_xp_elements(Screen.screen, float(Screen.screen.get_size()[0]) / float(self.previous_size[0]), float(Screen.screen.get_size()[1]) / float(self.previous_size[1]))
-                    self.quest_button.resize_ui_element(float(Screen.screen.get_size()[0]) / float(self.previous_size[0]), float(Screen.screen.get_size()[1]) / float(self.previous_size[1]))
-                    
-                    self.screen_size = Screen.screen.get_size()
-                    
-                    for element in elements.elements:
-                        element.reposition_elements()
-                    
-                    xp_bar.reposition_xp_elements(Screen.screen)
-            elif event.type == pygame.MOUSEMOTION:
+    def update(self, dt, events):
+        for event in events:
+            if event.type == pygame.MOUSEMOTION:
                 for element in elements.elements:
                     mouse_position = pygame.mouse.get_pos()
                     element.is_highlighted = element._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
@@ -145,43 +104,6 @@ class MainScene:
             for element in elements.elements:
                 if element.offset[0] + (-1 * movement_speed) <= 1200:
                     element.reposition_elements_with_offset((-1.0 * movement_speed, 0))
-        if pygame.key.get_pressed()[pygame.key.key_code("f11")]:
-            if not pygame.display.is_fullscreen():
-                self.previous_size = Screen.screen.get_size()
-                Screen.screen = pygame.display.set_mode(pygame.display.list_modes()[0])
-                Screen.screen = pygame.display.set_mode(pygame.display.list_modes()[0], pygame.FULLSCREEN)
-
-                ratio_of_change_in_size = max(monitor_size[0] / self.previous_size[0], monitor_size[1] / self.previous_size[1])
-                    
-                for element in elements.elements:
-                    element.resize_elements(float(monitor_size[0]) / float(self.previous_size[0]), float(monitor_size[1]) / float(self.previous_size[1]),ratio_of_change_in_size)
-                    
-                xp_bar.resize_xp_elements(Screen.screen, float(monitor_size[0]) / float(self.previous_size[0]), float(monitor_size[1]) / float(self.previous_size[1]))
-                self.quest_button.resize_ui_element(float(monitor_size[0]) / float(self.previous_size[0]), float(monitor_size[1]) / float(self.previous_size[1]))
-                    
-                self.screen_size = Screen.screen.get_size()
-                    
-                for element in elements.elements:
-                    element.reposition_elements()
-                    
-                xp_bar.reposition_xp_elements(Screen.screen)
-            else:
-                Screen.screen = pygame.display.set_mode(self.previous_size, pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
-
-                ratio_of_change_in_size = max(self.previous_size[0] / monitor_size[0], self.previous_size[1] / monitor_size[1])
-                    
-                for element in elements.elements:
-                    element.resize_elements(float(self.previous_size[0]) / float(monitor_size[0]), float(self.previous_size[1]) / float(monitor_size[1]),ratio_of_change_in_size)
-                    
-                xp_bar.resize_xp_elements(Screen.screen, float(self.previous_size[0]) / float(monitor_size[0]), float(self.previous_size[1]) / float(monitor_size[1]))
-                self.quest_button.resize_ui_element(float(self.previous_size[0]) / float(monitor_size[0]), float(self.previous_size[1]) / float(monitor_size[1]))
-                
-                self.screen_size = Screen.screen.get_size()
-                    
-                for element in elements.elements:
-                    element.reposition_elements()
-                    
-                xp_bar.reposition_xp_elements(Screen.screen)
         
         counter = 0
         for crafting_timer in crafting_timers:
@@ -225,3 +147,19 @@ class MainScene:
     
     def get_active_scene(self):
         return self.active_scene
+    
+    def resize_scene(self, new_size: tuple[int,int]):
+        ratio_of_change_in_size = max(new_size[0] / self.previous_size[0], new_size[1] / self.previous_size[1])
+                    
+        for element in elements.elements:
+            element.resize_elements(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]),ratio_of_change_in_size)
+                    
+        xp_bar.resize_xp_elements(Screen.screen, float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
+        self.quest_button.resize_ui_element(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
+                        
+        self.screen_size = Screen.screen.get_size()
+                    
+        for element in elements.elements:
+            element.reposition_elements()
+                    
+        xp_bar.reposition_xp_elements(Screen.screen)
