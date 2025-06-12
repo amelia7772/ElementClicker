@@ -103,6 +103,13 @@ class UiElement:
     def is_ui_element_button_hovered_over(self):
         return self._is_ui_element_button_hovered_over
     
+    def set_highlightable(self, is_highlightable: bool):
+        self.is_highlightable = is_highlightable
+        if is_highlightable:
+            self._hightliter_ellipse = Ellipse(0, 0, self.images[0].get_width(), self.images[0].get_height())
+            self._hightliter_ellipse_color = (150,150,150,100)
+            self.is_highlighted = False
+    
     def draw(self, screen: pygame.Surface, positions: list[tuple[int, int]]):
         for i in range(0, len(self.images)):
             screen.blit(self.images[i], positions[i])
