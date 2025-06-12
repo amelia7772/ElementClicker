@@ -143,3 +143,6 @@ class QuestLine:
         for i in range(0,len(quests)):
             quests[i].quest_ui_icon.update_position(self.quests_positions[i])
             quests[i].quest_ui_icon.draw(screen)
+            
+global quest_line
+quest_line = QuestLine()
