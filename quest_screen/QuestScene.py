@@ -21,7 +21,7 @@ class QuestScene:
         
         self.active_scene = Scene.main
     
-    def update(self, events):
+    def update(self, dt, events):
         for event in events:
             if event.type == pygame.MOUSEMOTION:
                 mouse_position = pygame.mouse.get_pos()
@@ -43,6 +43,8 @@ class QuestScene:
                 for quest in quests:
                     if quest.quest_ui_icon.is_ui_element_pressed():
                         quest.quest_ui_icon.set_ui_element_is_pressed(False)
+        
+        movement_speed = 6 * dt * 60
         
         Screen.screen.fill((46, 46, 46))
         
