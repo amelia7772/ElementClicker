@@ -20,7 +20,6 @@ class QuestScene:
         self.previous_size = self.screen_size
         
         self.active_scene = Scene.main
-        self.quest_line = QuestLine()
     
     def update(self, events):
         for event in events:
@@ -51,7 +50,7 @@ class QuestScene:
             for y in range(0, Screen.screen.get_height(), self.background_image.get_height()):
                 Screen.screen.blit(self.background_image, (x,y))
         
-        self.quest_line.draw(Screen.screen)
+        quest_line.draw(Screen.screen)
         
         self.quest_button.draw(Screen.screen)
     
@@ -64,6 +63,6 @@ class QuestScene:
     def resize_scene(self, new_size: tuple[int, int]):
                     
         self.quest_button.resize_ui_element(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
-        self.quest_line.resize_questline(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
+        quest_line.resize_questline(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
                     
         self.screen_size = Screen.screen.get_size()
