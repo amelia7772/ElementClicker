@@ -35,7 +35,7 @@ class QuestScene:
                     self.quest_button.set_ui_element_is_pressed(True)
                 for quest in quests:
                     if quest.quest_ui_icon.is_highlighted and not quest.quest_ui_icon.is_ui_element_pressed():
-                        quest.quest_ui_icon.is_highlighted.set_ui_element_is_pressed(True)
+                        quest.quest_ui_icon.set_ui_element_is_pressed(True)
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 if self.quest_button.is_ui_element_pressed():
