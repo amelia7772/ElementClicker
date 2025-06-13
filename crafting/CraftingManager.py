@@ -83,7 +83,7 @@ def craft(recipe: CraftingRecipe, screen: pygame.Surface):
         Elements.elements.elements[int(recipe.result[0])].increase_element_amount(recipe.result[1], screen)
         XpBar.xp_bar.increase_xp(recipe.resulting_xp, screen)
         for quest in QuestLine.quests:
-            if quest.condition(Elements.elements.elements, XpBar.xp_bar.level):
+            if (quest.condition(Elements.elements.elements, XpBar.xp_bar.level)) and (not quest.is_completed):
                 QuestLine.quest_line.set_quest_completed(quest.id, True)
     else:
         crafting_timers[int(recipe.result[0])] = time.time()
