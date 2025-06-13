@@ -26,9 +26,15 @@ previous_time = time.time()
 main_scene = MainScene(background_image)
 quest_scene = QuestScene(background_image)
 
+timer_for_saving_game = 0.0
+
 while True:
     dt = time.time() - previous_time
     previous_time = time.time()
+    timer_for_saving_game += dt
+    if timer_for_saving_game >= 5:
+        save_manager.save_game()
+        timer_for_saving_game = 0.0
     events = pygame.event.get()
     for event in events:
         if event.type == pygame.QUIT:
