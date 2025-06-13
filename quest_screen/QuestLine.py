@@ -172,13 +172,14 @@ class QuestLine:
     
     def display_quest_explanation_message(self, quest_id: int):
         self._displayed_quest_descriptions_quest_index = quest_id
+        
         longest_line_in_quest_description = max(self.__get_the_length_of_longest_line_in_text__(quests[quest_id].name), self.__get_the_length_of_longest_line_in_text__(quests[quest_id].description))
-        font_size = 50.0
+        font_size = 50.0 * min(self._ratio_of_change_in_width, self._ratio_of_change_in_height)
         for i in range(0, longest_line_in_quest_description, 10):
-            font_size *= 0.90
+            font_size *= 0.975
         self._pixelated_font = pygame.font.Font(os.path.join("assets", "fonts" ,"minecraft chmc.ttf"), int(font_size))
         
-        self._quest_description_text = pygame.Surface((self._quest_description_background.get_size()[0] - (self._quest_description_background.get_size()[0] / 10), Screen.screen.get_height()), pygame.SRCALPHA)
+        self._quest_description_text = pygame.Surface(((self._quest_description_background.get_size()[0] - (self._quest_description_background.get_size()[0] / 10)) * 1.5, Screen.screen.get_height() * 1.5), pygame.SRCALPHA)
         explanation_text_surface = pygame.Surface(self._quest_description_text.get_size(), pygame.SRCALPHA)
         quest_explanation_text_height = self.blit_text(self._quest_description_text, quests[quest_id].name, (0,0), self._pixelated_font)
         explanation_text_surface_height = self.blit_text(explanation_text_surface, quests[quest_id].description, (0,0), self._pixelated_font)
@@ -187,9 +188,9 @@ class QuestLine:
         quest_explanation_text_height += explanation_text_surface_height
         self._quest_description_background = pygame.transform.scale(self._quest_description_background_original, (300, max(quest_explanation_text_height + (quest_explanation_text_height / 10), 300)))
         if not (self._ratio_of_change_in_width == 1.0 and self._ratio_of_change_in_height == 1.0):
-            self._quest_description_text = pygame.transform.scale_by(self._quest_description_text, (self._ratio_of_change_in_width, self._ratio_of_change_in_height))
             self._quest_description_background = pygame.transform.scale_by(self._quest_description_background, (self._ratio_of_change_in_width, self._ratio_of_change_in_height))
-    
+        self._quest_description_text = pygame.transform.scale(self._quest_description_text, (int(self._quest_description_background.get_width() * (8.0/10.0)), int( int(self._quest_description_background.get_width() * (8.0/10.0)) * (float(self._quest_description_text.get_height()) / float(self._quest_description_text.get_width())))))
+            
     def draw(self, screen: pygame.Surface):
         for i in range(0,len(quests)):
             center_position_of_this_quest: pygame.Vector2 = pygame.Vector2(self.quests_positions[i][0], self.quests_positions[i][1] + (quests[i].quest_ui_icon.images[0].get_height() / 2))
