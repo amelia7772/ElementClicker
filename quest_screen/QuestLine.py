@@ -100,11 +100,9 @@ class QuestLine:
             for parent_quest in quests[i].parent_quests:
                 if parent_quest.id == quest_id:
                     quests[i].is_available = is_completed
-                    if is_completed:
-                        previous_ui_icon_image_size = quests[i].quest_ui_icon.images[1].get_size()
+                    previous_ui_icon_image_size = quests[i].quest_ui_icon.images[1].get_size()
                     quests[i].quest_ui_icon.set_quest_available(is_completed)
-                    if is_completed:
-                        quests[i].quest_ui_icon.images[1] = pygame.transform.scale(quests[i].quest_ui_icon.images[1], previous_ui_icon_image_size)
+                    quests[i].quest_ui_icon.images[1] = pygame.transform.scale(quests[i].quest_ui_icon.images[1], previous_ui_icon_image_size)
                     break
     
     #function made by u/plastic_astronomer on reddit
