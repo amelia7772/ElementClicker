@@ -43,8 +43,30 @@ class QuestScene:
                 for quest in quests:
                     if quest.quest_ui_icon.is_ui_element_pressed():
                         quest.quest_ui_icon.set_ui_element_is_pressed(False)
+            
+            elif event.type == pygame.MOUSEWHEEL:
+                zoom_speed = event.y * 0.1
+                if event.y >= 0:
+                    if quest_line._ratio_of_change_in_width <= 2 and quest_line._ratio_of_change_in_height <= 2:
+                        quest_line.resize_questline(1.0 + zoom_speed, 1.0 + zoom_speed)
+                else:
+                    if quest_line._ratio_of_change_in_width >= 0.5 and quest_line._ratio_of_change_in_height >= 0.5:
+                        quest_line.resize_questline(1.0 + zoom_speed, 1.0 + zoom_speed)
         
         movement_speed = 6 * dt * 60
+        
+        if pygame.key.get_pressed()[pygame.key.key_code("w")]:
+            if quest_line.position_offset[1] + (1 * movement_speed) <= 1200:
+                quest_line.set_position((quest_line.position_offset[0], quest_line.position_offset[1] + (1.0 * movement_speed)))
+        if pygame.key.get_pressed()[pygame.key.key_code("s")]:
+            if quest_line.position_offset[1] + (-1 * movement_speed) <= 1200:
+                quest_line.set_position((quest_line.position_offset[0], quest_line.position_offset[1] - (1.0 * movement_speed)))
+        if pygame.key.get_pressed()[pygame.key.key_code("a")]:
+            if quest_line.position_offset[0] + (1 * movement_speed)<= 1200:
+                quest_line.set_position((quest_line.position_offset[0] + (1.0 * movement_speed), quest_line.position_offset[1]))
+        if pygame.key.get_pressed()[pygame.key.key_code("d")]:
+            if quest_line.position_offset[0] + (-1 * movement_speed) <= 1200:
+                quest_line.set_position((quest_line.position_offset[0] + (-1.0 * movement_speed), quest_line.position_offset[1]))
         
         Screen.screen.fill((46, 46, 46))
         
