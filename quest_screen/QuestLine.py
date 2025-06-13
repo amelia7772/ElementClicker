@@ -159,8 +159,25 @@ class QuestLine:
             y += word_height
         return y
     
+    def __get_the_length_of_longest_line_in_text__(self, text: str):
+        length_of_longest_line = 0
+        length_of_current_line = 0
+        for character in text:
+            if character == '\n':
+                length_of_longest_line = max(length_of_longest_line, length_of_current_line)
+                length_of_current_line = 0
+            else:
+                length_of_current_line += 1
+        return length_of_longest_line
+    
     def display_quest_explanation_message(self, quest_id: int):
         self._displayed_quest_descriptions_quest_index = quest_id
+        longest_line_in_quest_description = max(self.__get_the_length_of_longest_line_in_text__(quests[quest_id].name), self.__get_the_length_of_longest_line_in_text__(quests[quest_id].description))
+        font_size = 50.0
+        for i in range(0, longest_line_in_quest_description, 10):
+            font_size *= 0.90
+        self._pixelated_font = pygame.font.Font(os.path.join("assets", "fonts" ,"minecraft chmc.ttf"), int(font_size))
+        
         self._quest_description_text = pygame.Surface((self._quest_description_background.get_size()[0] - (self._quest_description_background.get_size()[0] / 10), Screen.screen.get_height()), pygame.SRCALPHA)
         explanation_text_surface = pygame.Surface(self._quest_description_text.get_size(), pygame.SRCALPHA)
         quest_explanation_text_height = self.blit_text(self._quest_description_text, quests[quest_id].name, (0,0), self._pixelated_font)
