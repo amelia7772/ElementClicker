@@ -123,7 +123,7 @@ class MainScene:
                     elements.elements[int(recipe.result[0])]._is_element_currently_being_crafted = False
                     elements.elements[int(recipe.result[0])]._crafting_prorgress = 0.0
                     for quest in QuestLine.quests:
-                        if quest.condition(elements.elements, xp_bar.level):
+                        if (quest.condition(elements.elements, xp_bar.level)) and (not quest.is_completed):
                             QuestLine.quest_line.set_quest_completed(quest.id, True)
                 else:
                     elements.elements[int(recipe.result[0])]._crafting_prorgress = (time.time() - crafting_timer) / float(recipe.waiting_time)
