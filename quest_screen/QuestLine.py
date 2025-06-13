@@ -19,6 +19,9 @@ class QuestLine:
         self.arrows_size = (4, 12, 8)
         self.calculate_quests_positions_in_the_quest_line()
         self.set_position((200,125))
+        
+        self._ratio_of_change_in_width = 1.0
+        self._ratio_of_change_in_height = 1.0
     
     def set_position(self, new_position: tuple[int, int]):
         for i in range(0, len(self.quests_positions)):
@@ -33,6 +36,8 @@ class QuestLine:
         self.arrows_size = (self.arrows_size[0] * change_in_height, self.arrows_size[1] * change_in_width, self.arrows_size[2] * change_in_width)
         self.vertical_margin *= change_in_height
         self.horizontal_margin *= change_in_width
+        self._ratio_of_change_in_width *= change_in_width
+        self._ratio_of_change_in_height *= change_in_height
         self.position_offset = (self.position_offset[0] * change_in_width, self.position_offset[1] * change_in_height)
         self.calculate_quests_positions_in_the_quest_line()
         
