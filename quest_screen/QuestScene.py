@@ -37,12 +37,17 @@ class QuestScene:
                         quest.quest_ui_icon.set_ui_element_is_pressed(True)
             
             elif event.type == pygame.MOUSEBUTTONUP:
+                was_any_quest_ui_icon_pressed = False
                 if self.quest_button.is_ui_element_pressed():
                     self.quest_button.set_ui_element_is_pressed(False)
                     self.active_scene = Scene.main
                 for quest in quests:
                     if quest.quest_ui_icon.is_ui_element_pressed():
                         quest.quest_ui_icon.set_ui_element_is_pressed(False)
+                        quest_line.display_quest_explanation_message(quest.id)
+                        was_any_quest_ui_icon_pressed = True
+                if not was_any_quest_ui_icon_pressed:
+                    quest_line._displayed_quest_descriptions_quest_index = -1
             
             elif event.type == pygame.MOUSEWHEEL:
                 zoom_speed = event.y * 0.1
