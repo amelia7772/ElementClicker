@@ -9,7 +9,7 @@ quests: list[Quest] = []
 class QuestLine:
     
     def __init__(self):
-        quests.append(Quest(0,"Start Your Adventure", os.path.join("assets", "images" ,"wood log 16-bit.png"), "Collect a wooden log", lambda elements, level: elements[int(ElementType.wood)].element_resource_amount >= 1, [], True))
+        quests.append(Quest(0,"Start Your Adventure", os.path.join("assets", "images" ,"wood log 16-bit.png"), "Collect 10 wooden logs", lambda elements, level: elements[int(ElementType.wood)].element_resource_amount >= 10, [], True))
         quests.append(Quest(1,"you really hate your hands, don't you?", os.path.join("assets", "images" ,"rock.png"), "Collect 15 rocks", lambda elements, level: elements[int(ElementType.rock)].element_resource_amount >= 15, [quests[0]]))
         quests.append(Quest(2,"burn your enemies with the fires of your passion!!\nor make smores, your choice really", os.path.join("assets", "images" ,"fire 16-bit.png"), "Collect 9 fires", lambda elements, level: elements[int(ElementType.fire)].element_resource_amount >= 9, [quests[0]]))
         quests.append(Quest(3,"The Iron Age", os.path.join("assets", "images" ,"iron ingot 16-bit.png"), "Collect an iron bar", lambda elements, level: elements[int(ElementType.iron)].element_resource_amount >= 1, [quests[1], quests[2]]))
