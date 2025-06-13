@@ -2,7 +2,7 @@ import pygame
 import os
 from quest_screen.Quest import Quest
 from main_game_screen.ElementType import *
-from utilities.UiElement import UiElement
+from utilities import Screen
 
 global quests
 quests: list[Quest] = []
@@ -11,7 +11,7 @@ class QuestLine:
     def __init__(self):
         quests.append(Quest(0,"Start Your Adventure", os.path.join("assets", "images" ,"wood log 16-bit.png"), "Collect a wooden log", lambda elements, level: elements[int(ElementType.wood)].element_resource_amount >= 1, [], True))
         quests.append(Quest(1,"you really hate your hands, don't you?", os.path.join("assets", "images" ,"rock.png"), "Collect 15 rocks", lambda elements, level: elements[int(ElementType.rock)].element_resource_amount >= 15, [quests[0]]))
-        quests.append(Quest(2,"burn your enemies with the fires of your passion!!\nor make smores, your choice really", os.path.join("assets", "images" ,"fire 16-bit.png"), "Collect a 9 fires", lambda elements, level: elements[int(ElementType.fire)].element_resource_amount >= 9, [quests[0]]))
+        quests.append(Quest(2,"burn your enemies with the fires of your passion!!\nor make smores, your choice really", os.path.join("assets", "images" ,"fire 16-bit.png"), "Collect 9 fires", lambda elements, level: elements[int(ElementType.fire)].element_resource_amount >= 9, [quests[0]]))
         quests.append(Quest(3,"The Iron Age", os.path.join("assets", "images" ,"iron ingot 16-bit.png"), "Collect an iron bar", lambda elements, level: elements[int(ElementType.iron)].element_resource_amount >= 1, [quests[1], quests[2]]))
         self.vertical_margin = 20
         self.horizontal_margin = 100
@@ -20,8 +20,13 @@ class QuestLine:
         self.calculate_quests_positions_in_the_quest_line()
         self.set_position((200,125))
         
+        self._displayed_quest_descriptions_quest_index = -1 #-1 is no displayed quest description
+        self._quest_description_background = pygame.image.load(os.path.join("assets", "images" ,"quest explanation background.png")).convert_alpha()
+        self._quest_description_background_original = self._quest_description_background.copy()
         self._ratio_of_change_in_width = 1.0
         self._ratio_of_change_in_height = 1.0
+        self._pixelated_font = pygame.font.Font(os.path.join("assets", "fonts" ,"minecraft chmc.ttf"), 50)
+        self._quest_description_text = pygame.Surface((self._quest_description_background.get_size()[0] - (self._quest_description_background.get_size()[0] / 10), self._quest_description_background.get_size()[1]), pygame.SRCALPHA)
     
     def set_position(self, new_position: tuple[int, int]):
         for i in range(0, len(self.quests_positions)):
@@ -39,6 +44,7 @@ class QuestLine:
         self._ratio_of_change_in_width *= change_in_width
         self._ratio_of_change_in_height *= change_in_height
         self.position_offset = (self.position_offset[0] * change_in_width, self.position_offset[1] * change_in_height)
+        self.display_quest_explanation_message(self._displayed_quest_descriptions_quest_index)
         self.calculate_quests_positions_in_the_quest_line()
         
     def calculate_quests_positions_in_the_quest_line(self):
@@ -133,6 +139,40 @@ class QuestLine:
 
             pygame.draw.polygon(surface, color, body_verts)    
             
+    #from: https://stackoverflow.com/a/42015712
+    def blit_text(self, surface: pygame.Surface, text: str, pos: tuple[float, float], font: pygame.font.Font, color=pygame.Color("White")):
+        words = [word.split(' ') for word in text.splitlines()]
+        space = font.size(' ')[0]
+        max_width = surface.get_size()[0]
+        word_width, word_height = (0,0)
+        x, y = pos
+        for line in words:
+            for word in line:
+                word_surface = font.render(word, False, color)
+                word_width, word_height = word_surface.get_size()
+                if x + word_width >= max_width:
+                    x = pos[0]
+                    y += word_height
+                surface.blit(word_surface, (x, y))
+                x += word_width + space
+            x = pos[0]
+            y += word_height
+        return y
+    
+    def display_quest_explanation_message(self, quest_id: int):
+        self._displayed_quest_descriptions_quest_index = quest_id
+        self._quest_description_text = pygame.Surface((self._quest_description_background.get_size()[0] - (self._quest_description_background.get_size()[0] / 10), Screen.screen.get_height()), pygame.SRCALPHA)
+        explanation_text_surface = pygame.Surface(self._quest_description_text.get_size(), pygame.SRCALPHA)
+        quest_explanation_text_height = self.blit_text(self._quest_description_text, quests[quest_id].name, (0,0), self._pixelated_font)
+        explanation_text_surface_height = self.blit_text(explanation_text_surface, quests[quest_id].description, (0,0), self._pixelated_font)
+        explanation_text_surface = pygame.transform.scale_by(explanation_text_surface, 0.75)
+        self._quest_description_text.blit(explanation_text_surface,(0,quest_explanation_text_height + (quest_explanation_text_height / 10)))
+        quest_explanation_text_height += explanation_text_surface_height
+        self._quest_description_background = pygame.transform.scale(self._quest_description_background_original, (300, max(quest_explanation_text_height + (quest_explanation_text_height / 10), 300)))
+        if not (self._ratio_of_change_in_width == 1.0 and self._ratio_of_change_in_height == 1.0):
+            self._quest_description_text = pygame.transform.scale_by(self._quest_description_text, (self._ratio_of_change_in_width, self._ratio_of_change_in_height))
+            self._quest_description_background = pygame.transform.scale_by(self._quest_description_background, (self._ratio_of_change_in_width, self._ratio_of_change_in_height))
+    
     def draw(self, screen: pygame.Surface):
         for i in range(0,len(quests)):
             center_position_of_this_quest: pygame.Vector2 = pygame.Vector2(self.quests_positions[i][0], self.quests_positions[i][1] + (quests[i].quest_ui_icon.images[0].get_height() / 2))
@@ -148,6 +188,13 @@ class QuestLine:
         for i in range(0,len(quests)):
             quests[i].quest_ui_icon.update_position(self.quests_positions[i])
             quests[i].quest_ui_icon.draw(screen)
+        
+        if self._displayed_quest_descriptions_quest_index >= 0:
+            defocus_surface = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+            defocus_surface.fill(pygame.Color(0, 0, 0, 128))
+            screen.blit(defocus_surface, (0,0))
+            screen.blit(self._quest_description_background, ((screen.get_width() / 2) - (self._quest_description_background.get_width() / 2), (screen.get_height() / 2) - (self._quest_description_background.get_height() / 2)))
+            screen.blit(self._quest_description_text, ((screen.get_width() / 2) - (self._quest_description_background.get_width() / 2) + (self._quest_description_background.get_width() / 10), (screen.get_height() / 2) - (self._quest_description_background.get_height() / 2) + (self._quest_description_background.get_height() / 10)))
             
 global quest_line
 quest_line = QuestLine()
