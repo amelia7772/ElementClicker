@@ -90,15 +90,21 @@ class QuestLine:
     
     def set_quest_completed(self, quest_id: int, is_completed: bool):
         quests[quest_id].is_completed = is_completed
+        previous_background_size = quests[quest_id].quest_ui_icon.images[0].get_size()
         if is_completed:
             quests[quest_id].quest_ui_icon.set_background(quests[quest_id]._completed_quest_background)
         else:
             quests[quest_id].quest_ui_icon.set_background(quests[quest_id]._uncompleted_quest_background)
+        quests[quest_id].quest_ui_icon.images[0] = pygame.transform.scale(quests[quest_id].quest_ui_icon.images[0], previous_background_size)
         for i in range(0,len(quests)):
             for parent_quest in quests[i].parent_quests:
                 if parent_quest.id == quest_id:
                     quests[i].is_available = is_completed
+                    if is_completed:
+                        previous_ui_icon_image_size = quests[i].quest_ui_icon.images[1].get_size()
                     quests[i].quest_ui_icon.set_quest_available(is_completed)
+                    if is_completed:
+                        quests[i].quest_ui_icon.images[1] = pygame.transform.scale(quests[i].quest_ui_icon.images[1], previous_ui_icon_image_size)
                     break
     
     #function made by u/plastic_astronomer on reddit
