@@ -9,10 +9,18 @@ quests: list[Quest] = []
 class QuestLine:
     
     def __init__(self):
-        quests.append(Quest(0,"Start Your Adventure", os.path.join("assets", "images" ,"wood log 16-bit.png"), "Collect 10 wooden logs", lambda elements, level: elements[int(ElementType.wood)].element_resource_amount >= 10, [], True))
-        quests.append(Quest(1,"you really hate your hands, don't you?", os.path.join("assets", "images" ,"rock.png"), "Collect 15 rocks", lambda elements, level: elements[int(ElementType.rock)].element_resource_amount >= 15, [quests[0]]))
-        quests.append(Quest(2,"burn your enemies with the fires of your passion!!\nor make smores, your choice really", os.path.join("assets", "images" ,"fire 16-bit.png"), "Collect 9 fires", lambda elements, level: elements[int(ElementType.fire)].element_resource_amount >= 9, [quests[0]]))
-        quests.append(Quest(3,"The Iron Age", os.path.join("assets", "images" ,"iron ingot 16-bit.png"), "Collect an iron bar", lambda elements, level: elements[int(ElementType.iron)].element_resource_amount >= 1, [quests[1], quests[2]]))
+        quests.append(Quest(len(quests),"Start Your Adventure", os.path.join("assets", "images" ,"wood log 16-bit.png"), "Collect a wooden log", lambda elements, level: elements[int(ElementType.wood)].element_resource_amount >= 1, [], True))
+        quests.append(Quest(len(quests),"wait, this clicker game has xp?", os.path.join("assets", "images" ,"XP quest icon.png"), "collect 10 xp (you'll level up to level 1)", lambda elements, level: level >= 1, [quests[0]]))
+        quests.append(Quest(len(quests),"you really hate your hands, don't you?", os.path.join("assets", "images" ,"rock.png"), "Collect 15 rocks", lambda elements, level: elements[int(ElementType.rock)].element_resource_amount >= 15, [quests[1]]))
+        quests.append(Quest(len(quests),"burn your enemies with the fires of your passion!!\nor make smores, your choice really", os.path.join("assets", "images" ,"fire 16-bit.png"), "Collect 9 fires", lambda elements, level: elements[int(ElementType.fire)].element_resource_amount >= 9, [quests[1]]))
+        quests.append(Quest(len(quests),"The Iron Age", os.path.join("assets", "images" ,"iron ingot 16-bit.png"), "Collect an iron bar", lambda elements, level: elements[int(ElementType.iron)].element_resource_amount >= 1, [quests[2], quests[3]]))
+        quests.append(Quest(len(quests),"yes, an iron pickaxe can break obsedien", os.path.join("assets", "images" ,"iron pickaxe.png"), "Collect an iron pickaxe", lambda elements, level: elements[int(ElementType.iron_pickaxe)].element_resource_amount >= 1, [quests[4]]))
+        quests.append(Quest(len(quests),"may contain traces of iron, wood, and... cookies?", os.path.join("assets", "images" ,"iron hammer.png"), "Collect an iron hammer", lambda elements, level: elements[int(ElementType.iron_hammer)].element_resource_amount >= 1, [quests[4]]))
+        quests.append(Quest(len(quests),"steve would be sooo disappointed", os.path.join("assets", "images" ,"iron axe.png"), "Collect an iron axe", lambda elements, level: elements[int(ElementType.iron_axe)].element_resource_amount >= 1, [quests[4]]))
+        quests.append(Quest(len(quests),"come on, everyone loves hoes!", os.path.join("assets", "images" ,"iron hoe.png"), "Collect an iron hoe", lambda elements, level: elements[int(ElementType.iron_hoe)].element_resource_amount >= 1, [quests[4]]))
+        quests.append(Quest(len(quests),"give it to a child...\nfor the sand pit in kindergarten of course", os.path.join("assets", "images" ,"iron shovel.png"), "Collect an iron shovel", lambda elements, level: elements[int(ElementType.iron_shovel)].element_resource_amount >= 1, [quests[4]]))
+        quests.append(Quest(len(quests),"Quick! someone said game of thrones is bad!", os.path.join("assets", "images" ,"iron pitchfork.png"), "Collect an iron pitchfork", lambda elements, level: elements[int(ElementType.iron_pitchfork)].element_resource_amount >= 1, [quests[4]]))
+        quests.append(Quest(len(quests),"no actually, it's not just for grim reaper cosplay", os.path.join("assets", "images" ,"iron sickle scythe.png"), "Collect an iron sickle scythe", lambda elements, level: elements[int(ElementType.iron_sickle_scythe)].element_resource_amount >= 1, [quests[4]]))
         self.vertical_margin = 20
         self.horizontal_margin = 100
         self.position_offset = (0,0)
@@ -60,7 +68,10 @@ class QuestLine:
             if len(quests[i].parent_quests) > 0:
                 for parent_quest in quests[i].parent_quests:
                     last_parent_quest = max(last_parent_quest, parent_quest.id)
+            print(f'{last_parent_quest}' + ' , ' + f'{previous_last_parent_quest}')
             if (last_parent_quest > previous_last_parent_quest) or (i == (len(quests) - 1)):
+                if not (last_parent_quest > previous_last_parent_quest):
+                    number_of_quests_in_current_column += 1
                 if number_of_quests_in_current_column % 2 == 0:
                     y += self.vertical_margin / 2
                     y += (number_of_quests_in_current_column / 2) * quests[i].quest_ui_icon.images[0].get_height()
@@ -76,6 +87,7 @@ class QuestLine:
                     y -= quests[i].quest_ui_icon.images[0].get_height()
                     y -= self.vertical_margin
                     self.quests_positions.append((x,y))
+                print(number_of_quests_in_current_column)
                 number_of_quests_in_current_column = 0
                 y = 0
                 x += quests[i].quest_ui_icon.images[0].get_width()
