@@ -68,7 +68,6 @@ class QuestLine:
             if len(quests[i].parent_quests) > 0:
                 for parent_quest in quests[i].parent_quests:
                     last_parent_quest = max(last_parent_quest, parent_quest.id)
-            print(f'{last_parent_quest}' + ' , ' + f'{previous_last_parent_quest}')
             if (last_parent_quest > previous_last_parent_quest) or (i == (len(quests) - 1)):
                 if not (last_parent_quest > previous_last_parent_quest):
                     number_of_quests_in_current_column += 1
@@ -87,7 +86,6 @@ class QuestLine:
                     y -= quests[i].quest_ui_icon.images[0].get_height()
                     y -= self.vertical_margin
                     self.quests_positions.append((x,y))
-                print(number_of_quests_in_current_column)
                 number_of_quests_in_current_column = 0
                 y = 0
                 x += quests[i].quest_ui_icon.images[0].get_width()
