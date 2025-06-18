@@ -21,4 +21,5 @@ class ElementType(IntEnum):
     wheat_seeds = 17,
     wheat_plant = 18,
     harvested_wheat = 19,
-    heybale = 20
+    heybale = 20,
+    clay = 21
