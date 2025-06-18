@@ -40,7 +40,7 @@ class Elements(pygame.sprite.Group):
         self.elements.append(ElementLine((-400,350), os.path.join("assets", "images" ,"wheat plant.png"), self.element_background, ElementExplanationMessage("Wheat Plant", "How do I get the plants off the farmlands?!", get_recipe_for(ElementType.wheat_plant), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((-400,500), os.path.join("assets", "images" ,"harvested wheat.png"), self.element_background, ElementExplanationMessage("Harvested Wheat", "You need more than 3 to make bread.", get_recipe_for(ElementType.harvested_wheat), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((-675,50), os.path.join("assets", "images" ,"heybale.png"), self.element_background, ElementExplanationMessage("Heybale", "Feed it to the animals!", get_recipe_for(ElementType.heybale), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
-        
+        self.elements.append(ElementLine((0,350), os.path.join("assets", "images" ,"clay.png"), self.element_background, ElementExplanationMessage("Clay", "you can shape it however you want... yes, including as a [redacted]", get_recipe_for(ElementType.clay), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         
         for element in self.elements:
             element.element_explanation_message.redraw(self.elements)
