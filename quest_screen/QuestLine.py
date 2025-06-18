@@ -21,6 +21,10 @@ class QuestLine:
         quests.append(Quest(len(quests),"give it to a child...\nfor the sand pit in kindergarten of course", os.path.join("assets", "images" ,"iron shovel.png"), "Collect an iron shovel", lambda elements, level: elements[int(ElementType.iron_shovel)].element_resource_amount >= 1, [quests[4]]))
         quests.append(Quest(len(quests),"Quick! someone said game of thrones is bad!", os.path.join("assets", "images" ,"iron pitchfork.png"), "Collect an iron pitchfork", lambda elements, level: elements[int(ElementType.iron_pitchfork)].element_resource_amount >= 1, [quests[4]]))
         quests.append(Quest(len(quests),"no actually, it's not just for grim reaper cosplay", os.path.join("assets", "images" ,"iron sickle scythe.png"), "Collect an iron sickle scythe", lambda elements, level: elements[int(ElementType.iron_sickle_scythe)].element_resource_amount >= 1, [quests[4]]))
+        quests.append(Quest(len(quests),"... well, at least you have a pickaxe", os.path.join("assets", "images" ,"rock.png"), "Collect 100 rocks (the more pickaxes you have the faster breaking rocks is)", lambda elements, level: elements[int(ElementType.rock)].element_resource_amount >= 100, [quests[5]]))
+        quests.append(Quest(len(quests),"the mountains are made of pebbles", os.path.join("assets", "images" ,"gravil.png"), "Collect a batch of gravil", lambda elements, level: elements[int(ElementType.gravil)].element_resource_amount >= 1, [quests[6]]))
+        quests.append(Quest(len(quests),"the start of the gold hunt!", os.path.join("assets", "images" ,"sand.png"), "Collect a batch of sand", lambda elements, level: elements[int(ElementType.sand)].element_resource_amount >= 1, [quests[13]]))
+        
         self.vertical_margin = 20
         self.horizontal_margin = 100
         self.position_offset = (0,0)
@@ -56,46 +60,43 @@ class QuestLine:
         self.calculate_quests_positions_in_the_quest_line()
         
     def calculate_quests_positions_in_the_quest_line(self):
+        quests_column_row_position: list[list[int]] = [[]]
+        for i in range(0, len(quests)):
+            if len(quests[i].parent_quests) == 0:
+                quests_column_row_position[0].append(quests[i].id)
+                continue
+            possible_columns: list[int] = []
+            for x in range(0, len(quests[i].parent_quests)):
+                for j in range(0,len(quests_column_row_position)):
+                    for k in range(0,len(quests_column_row_position[j])):
+                        if quests_column_row_position[j][k] == quests[i].parent_quests[x].id:
+                            possible_columns.append(j + 1)
+            current_column = max(possible_columns)
+            if current_column < len(quests_column_row_position):
+                quests_column_row_position[current_column].append(quests[i].id)
+            else:
+                quests_column_row_position.append([quests[i].id])
+        
         self.quests_positions: list[tuple[int, int]] = []
         previous_position_offset = self.position_offset
         self.position_offset = (0,0)
-        last_parent_quest = -1
-        previous_last_parent_quest = last_parent_quest
-        number_of_quests_in_current_column = 0
         x, y = 0, 0
-        for i in range(0, len(quests)):
-            previous_last_parent_quest = last_parent_quest
-            if len(quests[i].parent_quests) > 0:
-                for parent_quest in quests[i].parent_quests:
-                    last_parent_quest = max(last_parent_quest, parent_quest.id)
-            if (last_parent_quest > previous_last_parent_quest) or (i == (len(quests) - 1)):
-                if not (last_parent_quest > previous_last_parent_quest):
-                    number_of_quests_in_current_column += 1
-                if number_of_quests_in_current_column % 2 == 0:
-                    y += self.vertical_margin / 2
-                    y += (number_of_quests_in_current_column / 2) * quests[i].quest_ui_icon.images[0].get_height()
-                    y += ((number_of_quests_in_current_column / 2) - 1) * self.vertical_margin
-                    self.quests_positions.append((x,y))
-                else:
-                    y += quests[i].quest_ui_icon.images[0].get_height() / 2
-                    y += (number_of_quests_in_current_column // 2) * quests[i].quest_ui_icon.images[0].get_height()
-                    y += (number_of_quests_in_current_column // 2) * self.vertical_margin
-                    self.quests_positions.append((x,y))
-                    
-                for n in range(1, number_of_quests_in_current_column):
-                    y -= quests[i].quest_ui_icon.images[0].get_height()
-                    y -= self.vertical_margin
-                    self.quests_positions.append((x,y))
-                number_of_quests_in_current_column = 0
-                y = 0
-                x += quests[i].quest_ui_icon.images[0].get_width()
-                x += self.horizontal_margin
-            if (last_parent_quest > previous_last_parent_quest) and (i == (len(quests) - 1)):
-                y += quests[i].quest_ui_icon.images[0].get_height() / 2
-                y += (number_of_quests_in_current_column // 2) * quests[i].quest_ui_icon.images[0].get_height()
-                y += (number_of_quests_in_current_column // 2) * self.vertical_margin
+        for i in range(0, len(quests_column_row_position)):
+            if (len(quests_column_row_position[i]) % 2) == 0:
+                y += self.vertical_margin / 2
+                y += (self.vertical_margin * ((len(quests_column_row_position[i]) // 2) - 1))
+                y += quests[0].quest_ui_icon.images[0].get_height() * (len(quests_column_row_position[i]) // 2)
+            else:
+                y += quests[0].quest_ui_icon.images[0].get_height() / 2
+                y += (self.vertical_margin * (len(quests_column_row_position[i]) // 2))
+                y += quests[0].quest_ui_icon.images[0].get_height() * (len(quests_column_row_position[i]) // 2)
+            for j in range(0,len(quests_column_row_position[i])):
                 self.quests_positions.append((x,y))
-            number_of_quests_in_current_column += 1
+                y -= quests[0].quest_ui_icon.images[0].get_height()
+                y -= self.vertical_margin
+            y = 0
+            x += quests[0].quest_ui_icon.images[0].get_width()
+            x += self.horizontal_margin
         self.set_position(previous_position_offset)
     
     def set_quest_completed(self, quest_id: int, is_completed: bool):
