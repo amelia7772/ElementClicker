@@ -23,7 +23,8 @@ crafting_table: tuple[CraftingRecipe] = (CraftingRecipe((), result= (ElementType
                                          CraftingRecipe((ElementType.dirt, 6, True), (ElementType.iron_hoe, 1, False), result= (ElementType.wheat_seeds, 1), resulting_xp= 25, waiting_time= 3),
                                          CraftingRecipe((ElementType.farmland, 1, True), (ElementType.wheat_seeds, 1, True), result= (ElementType.wheat_plant, 1), resulting_xp= 15, waiting_time= -1),
                                          CraftingRecipe((ElementType.wheat_plant, 1, True), (ElementType.iron_sickle_scythe, 1, False), result= (ElementType.harvested_wheat, 1), resulting_xp= 25, waiting_time= 2),
-                                         CraftingRecipe((ElementType.harvested_wheat, 1, True), (ElementType.iron_pitchfork, 1, False), result= (ElementType.heybale, 1), resulting_xp= 10, waiting_time= 1.5))
+                                         CraftingRecipe((ElementType.harvested_wheat, 1, True), (ElementType.iron_pitchfork, 1, False), result= (ElementType.heybale, 1), resulting_xp= 10, waiting_time= 1.5),
+                                         CraftingRecipe((ElementType.dirt, 3, True), (ElementType.water, 1, True), result= (ElementType.clay, 1), resulting_xp= 20, waiting_time= 1.5))
 
 crafting_timers: list[int] = []
 
