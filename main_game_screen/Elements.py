@@ -78,6 +78,9 @@ class Elements(pygame.sprite.Group):
             self.elements[int(ElementType.harvested_wheat)].is_available = True
         if self.elements[int(ElementType.harvested_wheat)].element_resource_amount >= 1:
             self.elements[int(ElementType.heybale)].is_available = True
+        if (self.elements[int(ElementType.water)].element_resource_amount >= 1) and (self.elements[int(ElementType.dirt)].element_resource_amount >= 1):
+            self.elements[int(ElementType.clay)].is_available = True
+            
     def draw(self, surface: pygame.surface.Surface):
         for element in self.elements:
             element.draw(surface)
