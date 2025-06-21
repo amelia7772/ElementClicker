@@ -32,6 +32,7 @@ class MainScene:
         self.rock_timer = 0
 
         self.element_explanation_message_displayed = -1
+        self.last_element_clicked = ElementType.wood
     
     def update(self, dt, events):
         for event in events:
@@ -46,6 +47,7 @@ class MainScene:
                 for element in elements.elements:
                     if element.is_highlighted and not element.is_element_pressed():
                         element.set_element_is_pressed(True)
+                        self.last_element_clicked = ElementType(counter)
                         if get_recipe_for(ElementType(counter)).waiting_time > 0 and is_craftable(get_recipe_for(ElementType(counter))):
                             element._crafting_prorgress = 0.0
                             element._is_element_currently_being_crafted = True
