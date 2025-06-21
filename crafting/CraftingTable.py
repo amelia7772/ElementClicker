@@ -24,7 +24,12 @@ crafting_table: tuple[CraftingRecipe] = (CraftingRecipe((), result= (ElementType
                                          CraftingRecipe((ElementType.farmland, 1, True), (ElementType.wheat_seeds, 1, True), result= (ElementType.wheat_plant, 1), resulting_xp= 15, waiting_time= -1),
                                          CraftingRecipe((ElementType.wheat_plant, 1, True), (ElementType.iron_sickle_scythe, 1, False), result= (ElementType.harvested_wheat, 1), resulting_xp= 25, waiting_time= 2),
                                          CraftingRecipe((ElementType.harvested_wheat, 1, True), (ElementType.iron_pitchfork, 1, False), result= (ElementType.heybale, 1), resulting_xp= 10, waiting_time= 1.5),
-                                         CraftingRecipe((ElementType.dirt, 3, True), (ElementType.water, 1, True), result= (ElementType.clay, 1), resulting_xp= 20, waiting_time= 1.5))
+                                         CraftingRecipe((ElementType.dirt, 3, True), (ElementType.water, 1, True), result= (ElementType.clay, 1), resulting_xp= 20, waiting_time= 1.5),
+                                         CraftingRecipe((ElementType.clay, 1, True), (ElementType.fire, 3, True), result= (ElementType.brick, 1), resulting_xp= 20, waiting_time= 1.5),
+                                         CraftingRecipe((ElementType.sand, 1, True), (ElementType.gravil, 1, True), result= (ElementType.cement, 2), resulting_xp= 20, waiting_time= 1.5),
+                                         CraftingRecipe((ElementType.cement, 10, True), (ElementType.brick, 20, True), (ElementType.water, 10, True), (ElementType.iron, 10, True), (ElementType.fire, 10, True), result= (ElementType.factory_tier_one, 1), resulting_xp= 100, waiting_time= 4),
+                                         CraftingRecipe((ElementType.factory_tier_one, 1, True), (ElementType.iron, 20, True), (ElementType.fire, 20, True), result= (ElementType.factory_tier_two, 1), resulting_xp= 150, waiting_time= 10),
+                                         CraftingRecipe((ElementType.factory_tier_two, 1, True), (ElementType.iron, 20, True), (ElementType.fire, 20, True), result= (ElementType.factory_tier_three, 1), resulting_xp= 200, waiting_time= 20))
 
 crafting_timers: list[int] = []
 
