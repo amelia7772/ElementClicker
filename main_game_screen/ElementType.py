@@ -22,4 +22,9 @@ class ElementType(IntEnum):
     wheat_plant = 18,
     harvested_wheat = 19,
     heybale = 20,
-    clay = 21
+    clay = 21,
+    brick = 22,
+    cement = 23,
+    factory_tier_one = 24,
+    factory_tier_two = 25,
+    factory_tier_three = 26
