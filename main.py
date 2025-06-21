@@ -56,23 +56,23 @@ def evaluate_crafting_timers():
 
 def check_for_automatic_crafting(timer_for_factory_tier_one):
     if elements.elements[int(ElementType.factory_tier_one)].element_resource_amount >= 1:
-        if main_scene.last_element_clicked == ElementType.wood or main_scene.last_element_clicked == ElementType.rock or main_scene.last_element_clicked == ElementType.water or main_scene.last_element_clicked == ElementType.dirt:
+        if main_scene.selected_element_to_be_produced_by_factories[0] >= 0:
             delay = 1
             for i in range(1, elements.elements[int(ElementType.factory_tier_one)].element_resource_amount):
                 delay -= (delay * 0.10)
             recipe = get_recipe_for(main_scene.last_element_clicked)
-            if timer_for_factory_tier_one >= delay or elements.elements[main_scene.last_element_clicked]._is_element_currently_being_crafted:
+            if timer_for_factory_tier_one >= delay or elements.elements[ElementType(main_scene.selected_element_to_be_produced_by_factories[0])]._is_element_currently_being_crafted:
                 timer_for_factory_tier_one = 0.0
-                elements.elements[main_scene.last_element_clicked].set_element_is_pressed(True)
+                elements.elements[main_scene.selected_element_to_be_produced_by_factories[0]].set_element_is_pressed(True)
                 if recipe.waiting_time > 0 and is_craftable(recipe):
-                    elements.elements[main_scene.last_element_clicked]._crafting_prorgress = 0.0
-                    elements.elements[main_scene.last_element_clicked]._is_element_currently_being_crafted = True
-                if elements.elements[main_scene.last_element_clicked].is_element_pressed() and crafting_timers[int(main_scene.last_element_clicked)] == -1:
+                    elements.elements[main_scene.selected_element_to_be_produced_by_factories[0]]._crafting_prorgress = 0.0
+                    elements.elements[main_scene.selected_element_to_be_produced_by_factories[0]]._is_element_currently_being_crafted = True
+                if elements.elements[main_scene.selected_element_to_be_produced_by_factories[0]].is_element_pressed() and crafting_timers[main_scene.selected_element_to_be_produced_by_factories[0]] == -1:
                         if is_craftable(recipe):
                             craft(recipe, Screen.screen)
                             reevaluate_recipes_waiting_time()
-                        if crafting_timers[int(main_scene.last_element_clicked)] == -1:
-                            elements.elements[main_scene.last_element_clicked].set_element_is_pressed(False)
+                        if crafting_timers[main_scene.selected_element_to_be_produced_by_factories[0]] == -1:
+                            elements.elements[main_scene.selected_element_to_be_produced_by_factories[0]].set_element_is_pressed(False)
             else:
                 timer_for_factory_tier_one += dt
     return timer_for_factory_tier_one
