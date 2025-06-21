@@ -56,6 +56,29 @@ def evaluate_crafting_timers():
                 elements.elements[int(recipe.result[0])]._crafting_prorgress = (time.time() - crafting_timer) / float(recipe.waiting_time)
         counter += 1
 
+def check_for_automatic_crafting(timer_for_factory_tier_one):
+    if elements.elements[int(ElementType.factory_tier_one)].element_resource_amount >= 1:
+        if main_scene.last_element_clicked == ElementType.wood or main_scene.last_element_clicked == ElementType.rock or main_scene.last_element_clicked == ElementType.water or main_scene.last_element_clicked == ElementType.dirt:
+            delay = 1
+            for i in range(1, elements.elements[int(ElementType.factory_tier_one)].element_resource_amount):
+                delay -= (delay * 0.10)
+            recipe = get_recipe_for(main_scene.last_element_clicked)
+            if timer_for_factory_tier_one >= delay or elements.elements[main_scene.last_element_clicked]._is_element_currently_being_crafted:
+                timer_for_factory_tier_one = 0.0
+                elements.elements[main_scene.last_element_clicked].set_element_is_pressed(True)
+                if recipe.waiting_time > 0 and is_craftable(recipe):
+                    elements.elements[main_scene.last_element_clicked]._crafting_prorgress = 0.0
+                    elements.elements[main_scene.last_element_clicked]._is_element_currently_being_crafted = True
+                if elements.elements[main_scene.last_element_clicked].is_element_pressed() and crafting_timers[int(main_scene.last_element_clicked)] == -1:
+                        if is_craftable(recipe):
+                            craft(recipe, Screen.screen)
+                            reevaluate_recipes_waiting_time()
+                        if crafting_timers[int(main_scene.last_element_clicked)] == -1:
+                            elements.elements[main_scene.last_element_clicked].set_element_is_pressed(False)
+            else:
+                timer_for_factory_tier_one += dt
+    return timer_for_factory_tier_one
+
 while True:
     dt = time.time() - previous_time
     previous_time = time.time()
@@ -92,6 +115,7 @@ while True:
         main_scene.resize_scene(Screen.screen.get_size())
         quest_scene.resize_scene(Screen.screen.get_size())
     
+    timer_for_factory_tier_one = check_for_automatic_crafting(timer_for_factory_tier_one)
     evaluate_crafting_timers()
     if active_scene == Scene.main:
         main_scene.update(dt, events)
