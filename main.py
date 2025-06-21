@@ -30,8 +30,6 @@ quest_scene = QuestScene(background_image)
 timer_for_saving_game = 0.0
 timer_for_factory_tier_one = 0.0
 
-#elements.elements[int(ElementType.factory_tier_one)].element_resource_amount += 1
-
 def evaluate_crafting_timers():
     counter = 0
     for crafting_timer in crafting_timers:
