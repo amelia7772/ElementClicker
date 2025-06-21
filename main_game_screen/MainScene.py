@@ -32,7 +32,6 @@ class MainScene:
         self.rock_timer = 0
 
         self.element_explanation_message_displayed = -1
-        self.last_element_clicked = ElementType.wood
         self.selected_element_to_be_produced_by_factories = [-1, -1, -1, -1, -1, -1]
     
     def update(self, dt, events):
@@ -48,7 +47,6 @@ class MainScene:
                 for element in elements.elements:
                     if element.is_highlighted and not element.is_element_pressed():
                         element.set_element_is_pressed(True)
-                        self.last_element_clicked = ElementType(counter)
                         self.selected_element_to_be_produced_by_factories[element.element_tier - 1] = counter
                         if get_recipe_for(ElementType(counter)).waiting_time > 0 and is_craftable(get_recipe_for(ElementType(counter))):
                             element._crafting_prorgress = 0.0
