@@ -49,6 +49,7 @@ class MainScene:
                     if element.is_highlighted and not element.is_element_pressed():
                         element.set_element_is_pressed(True)
                         self.last_element_clicked = ElementType(counter)
+                        self.selected_element_to_be_produced_by_factories[element.element_tier - 1] = counter
                         if get_recipe_for(ElementType(counter)).waiting_time > 0 and is_craftable(get_recipe_for(ElementType(counter))):
                             element._crafting_prorgress = 0.0
                             element._is_element_currently_being_crafted = True
