@@ -108,29 +108,6 @@ class MainScene:
                 if element.offset[0] + (-1 * movement_speed) <= 1200:
                     element.reposition_elements_with_offset((-1.0 * movement_speed, 0))
         
-        counter = 0
-        for crafting_timer in crafting_timers:
-            recipe = get_recipe_for(ElementType(counter))
-            if crafting_timer >= 0:
-                if (time.time() - crafting_timer) >= recipe.waiting_time:
-                    if len(recipe.ingredients[0]) != 0:
-                        for ingredient in recipe.ingredients:
-                            if ingredient[2]:
-                                elements.elements[int(ingredient[0])].increase_element_amount(-ingredient[1], Screen.screen)
-                    elements.elements[int(recipe.result[0])].increase_element_amount(recipe.result[1], Screen.screen)
-                    reevaluate_recipes_waiting_time()
-                    xp_bar.increase_xp(recipe.resulting_xp, Screen.screen)
-                    crafting_timers[counter] = -1
-                    elements.elements[int(recipe.result[0])].set_element_is_pressed(False)
-                    elements.elements[int(recipe.result[0])]._is_element_currently_being_crafted = False
-                    elements.elements[int(recipe.result[0])]._crafting_prorgress = 0.0
-                    for quest in QuestLine.quests:
-                        if (quest.condition(elements.elements, xp_bar.level)) and (not quest.is_completed):
-                            QuestLine.quest_line.set_quest_completed(quest.id, True)
-                else:
-                    elements.elements[int(recipe.result[0])]._crafting_prorgress = (time.time() - crafting_timer) / float(recipe.waiting_time)
-            counter += 1
-        
         elements.reevaluate_availability(xp_bar.level)  
         
         Screen.screen.fill((46, 46, 46))
