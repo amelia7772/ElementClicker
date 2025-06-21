@@ -41,7 +41,12 @@ class Elements(pygame.sprite.Group):
         self.elements.append(ElementLine((-400,500), os.path.join("assets", "images" ,"harvested wheat.png"), self.element_background, ElementExplanationMessage("Harvested Wheat", "You need more than 3 to make bread.", get_recipe_for(ElementType.harvested_wheat), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((-675,50), os.path.join("assets", "images" ,"heybale.png"), self.element_background, ElementExplanationMessage("Heybale", "Feed it to the animals!", get_recipe_for(ElementType.heybale), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((950,200), os.path.join("assets", "images" ,"clay.png"), self.element_background, ElementExplanationMessage("Clay", "you can shape it however you want... yes, including as a [redacted]", get_recipe_for(ElementType.clay), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
-        
+        self.elements.append(ElementLine((1025,200), os.path.join("assets", "images" ,"brick.png"), self.element_background, ElementExplanationMessage("Brick", "very dense hardened clay used for building (other applications left to the imagination of the reader)", get_recipe_for(ElementType.brick), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+        self.elements.append(ElementLine((950,50), os.path.join("assets", "images" ,"cement.png"), self.element_background, ElementExplanationMessage("Cement", "the perfect material to fill a swiming pool with!", get_recipe_for(ElementType.cement), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+        self.elements.append(ElementLine((1025,350), os.path.join("assets", "images" ,"production facility tier 1.png"), self.element_background, ElementExplanationMessage("Production Facility Tier 1", "yes, this is an idle game afteral (automatically produces more of the last item you clicked on, provided it's immediately gathered without crafting)", get_recipe_for(ElementType.factory_tier_one), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+        self.elements.append(ElementLine((1025,500), os.path.join("assets", "images" ,"production facility tier 2.png"), self.element_background, ElementExplanationMessage("Production Facility Tier 2", "automatically produces more of the last item you clicked on, provided it's crafted from 1st tier items", get_recipe_for(ElementType.factory_tier_two), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+        self.elements.append(ElementLine((1025,650), os.path.join("assets", "images" ,"production facility tier 3.png"), self.element_background, ElementExplanationMessage("Production Facility Tier 3", "automatically produces more of the last item you clicked on, provided it's crafted from 2nd tier items", get_recipe_for(ElementType.factory_tier_three), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+
         for element in self.elements:
             element.element_explanation_message.redraw(self.elements)
         
@@ -50,8 +55,15 @@ class Elements(pygame.sprite.Group):
             self.elements[int(ElementType.fire)].is_available = True
         if level >= 3:
             self.elements[int(ElementType.rock)].is_available = True
-        if level >= 5 and self.elements[int(ElementType.iron)].is_available:
-            self.elements[int(ElementType.bucket)].is_available = True
+        if self.elements[int(ElementType.iron)].is_available:
+            if level >= 5:
+                self.elements[int(ElementType.bucket)].is_available = True
+            if level >= 10:
+                self.elements[int(ElementType.factory_tier_one)].is_available = True
+                if self.elements[int(ElementType.factory_tier_one)].element_resource_amount >= 1:
+                    self.elements[int(ElementType.factory_tier_two)].is_available = True
+                if self.elements[int(ElementType.factory_tier_two)].element_resource_amount >= 1:
+                    self.elements[int(ElementType.factory_tier_three)].is_available = True
         if self.elements[int(ElementType.rock)].element_resource_amount >= 5 and self.elements[int(ElementType.fire)].element_resource_amount >= 3:
             self.elements[int(ElementType.iron)].is_available = True
         if self.elements[int(ElementType.bucket)].element_resource_amount >= 1:
