@@ -92,6 +92,10 @@ class Elements(pygame.sprite.Group):
             self.elements[int(ElementType.heybale)].is_available = True
         if (self.elements[int(ElementType.water)].element_resource_amount >= 1) and (self.elements[int(ElementType.dirt)].element_resource_amount >= 1):
             self.elements[int(ElementType.clay)].is_available = True
+        if self.elements[int(ElementType.clay)].element_resource_amount >= 1:
+            self.elements[int(ElementType.brick)].is_available = True
+        if (self.elements[int(ElementType.sand)].element_resource_amount >= 4) and (self.elements[int(ElementType.gravil)].element_resource_amount >= 4):
+            self.elements[int(ElementType.cement)].is_available = True
             
     def draw(self, surface: pygame.surface.Surface):
         for element in self.elements:
