@@ -6,12 +6,14 @@ import os
 from utilities.Ellipse import Ellipse
 from main_game_screen.ElementExplanationMessage import ElementExplanationMessage
 
+
 class ElementLine(pygame.sprite.Group):
-    def __init__(self, position: tuple[float, float],element_image_path: str, background: pygame.Surface, element_explanation_message: ElementExplanationMessage):
+    def __init__(self, position: tuple[float, float], element_tier: int,element_image_path: str, background: pygame.Surface, element_explanation_message: ElementExplanationMessage):
         super().__init__()
         self.element_resource_amount = 0
         self.position = position
         self._initial_position = position
+        self.element_tier = element_tier
         self.is_available = False
         self._element_image = Element(element_image_path)
         self.pixelated_font = pygame.font.Font(os.path.join("assets", "fonts" ,"minecraft chmc.ttf"), 50)
@@ -170,7 +172,7 @@ class ElementLine(pygame.sprite.Group):
         previous_size = self._element_text._element_text_original.get_rect().size
         self._element_text.image = self.pixelated_font.render(str(self.element_resource_amount), False, "White").convert_alpha()
         self._element_text._element_text_original = self._element_text.image.copy()
-                
+        
         self._element_text.rect.size = self._element_text.image.get_rect().size
         self._element_text_rect_float_size = (self._element_text_rect_float_size[0] * (float(self._element_text.rect.size[0]) / float(previous_size[0])), self._element_text_rect_float_size[1])
         self._element_text.rect.size = (float(self._element_text_rect_float_size[0]), float(self._element_text_rect_float_size[1]))
