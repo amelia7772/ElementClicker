@@ -33,6 +33,7 @@ class MainScene:
 
         self.element_explanation_message_displayed = -1
         self.last_element_clicked = ElementType.wood
+        self.selected_element_to_be_produced_by_factories = [-1, -1, -1, -1, -1, -1]
     
     def update(self, dt, events):
         for event in events:
