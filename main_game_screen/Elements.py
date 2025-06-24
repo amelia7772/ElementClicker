@@ -46,7 +46,11 @@ class Elements(pygame.sprite.Group):
         self.elements.append(ElementLine((1300,200), 5, os.path.join("assets", "images" ,"production facility tier 1.png"), self.element_background, ElementExplanationMessage("Factory Tier 1", "produces more of the last item you clicked on, provided it doesn't have ingredients", get_recipe_for(ElementType.factory_tier_one), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((1475,200), 6, os.path.join("assets", "images" ,"production facility tier 2.png"), self.element_background, ElementExplanationMessage("Factory Tier 2", "produces more of the last item you clicked on, provided it's crafted from 1st tier items", get_recipe_for(ElementType.factory_tier_two), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((1650,200), 6, os.path.join("assets", "images" ,"production facility tier 3.png"), self.element_background, ElementExplanationMessage("Factory Tier 3", "produces more of the last item you clicked on, provided it's crafted from 2nd tier items", get_recipe_for(ElementType.factory_tier_three), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
-
+        self.elements.append(ElementLine((125,500), 4, os.path.join("assets", "images" ,"golden nuggets.png"), self.element_background, ElementExplanationMessage("Golden Nuggets", "some gravil that's soft and malleable, meh, it's probably useless", get_recipe_for(ElementType.golden_nuggets), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+        self.elements.append(ElementLine((400,500), 5, os.path.join("assets", "images" ,"gold ingot.png"), self.element_background, ElementExplanationMessage("Gold Ingot", "so, you mixed in copper with that soft gravil to make it hard, why not just use copper?", get_recipe_for(ElementType.gold_ingot), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+        self.elements.append(ElementLine((125,650), 3, os.path.join("assets", "images" ,"copper nuggets.png"), self.element_background, ElementExplanationMessage("Copper Nuggets", "some gravil that is sharp and surprisingly strong, I wonder how it tastes...", get_recipe_for(ElementType.copper_nuggets), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+        self.elements.append(ElementLine((400,500), 4, os.path.join("assets", "images" ,"copper ingot.png"), self.element_background, ElementExplanationMessage("Copper Ingot", "a strong conductor of electricity, and very hard yet can be easily forged", get_recipe_for(ElementType.copper_ingot), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+        
         for element in self.elements:
             element.element_explanation_message.redraw(self.elements)
         
@@ -96,6 +100,14 @@ class Elements(pygame.sprite.Group):
             self.elements[int(ElementType.brick)].is_available = True
         if (self.elements[int(ElementType.sand)].element_resource_amount >= 4) and (self.elements[int(ElementType.gravil)].element_resource_amount >= 4):
             self.elements[int(ElementType.cement)].is_available = True
+        if self.elements[int(ElementType.gravil)].element_resource_amount >= 1:
+            self.elements[int(ElementType.copper_nuggets)].is_available = True
+        if self.elements[int(ElementType.sand)].element_resource_amount >= 1:
+            self.elements[int(ElementType.golden_nuggets)].is_available = True
+        if self.elements[int(ElementType.copper_nuggets)].element_resource_amount >= 1:
+            self.elements[int(ElementType.copper_ingot)].is_available = True
+        if self.elements[int(ElementType.golden_nuggets)].element_resource_amount >= 1:
+            self.elements[int(ElementType.gold_ingot)].is_available = True
             
     def draw(self, surface: pygame.surface.Surface):
         for element in self.elements:
