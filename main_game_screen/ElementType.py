@@ -27,4 +27,8 @@ class ElementType(IntEnum):
     cement = 23,
     factory_tier_one = 24,
     factory_tier_two = 25,
-    factory_tier_three = 26
+    factory_tier_three = 26,
+    golden_nuggets = 27,
+    copper_nuggets = 28,
+    gold_ingot = 29,
+    copper_ingot = 30
