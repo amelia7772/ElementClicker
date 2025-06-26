@@ -6,6 +6,7 @@ from crafting.CraftingRecipe import CraftingRecipe
 class ElementExplanationMessage(pygame.sprite.Sprite):
     def __init__(self, element_name: str, element_description: str, recipe: CraftingRecipe,image: pygame.Surface, rect: pygame.Rect):
         super().__init__()
+        self.background_image = image.copy()
         self.image = image.copy()
         self.original_image = image.copy()
         self.rect = rect
@@ -14,22 +15,7 @@ class ElementExplanationMessage(pygame.sprite.Sprite):
         self.element_description = element_description
         self.recipe = recipe
         self.pixelated_font = pygame.font.Font(os.path.join("assets", "fonts" ,"minecraft chmc.ttf"), 50)
-        
-                
-    def scale_rect_without_changing_aspect_ratio(self, rect_size: tuple[float, float], change_in_width: float, change_in_height: float):
-        if rect_size[0] == 0 or rect_size[1] == 0:
-            return rect_size
-        original_ratio_of_width_to_height = float(rect_size[0]) / float(rect_size[1])
-        original_ratio_of_height_to_width = float(rect_size[1]) / float(rect_size[0])
-        
-        non_preservative_scaled_rect_size = (rect_size[0] * change_in_width, rect_size[1] * change_in_height)
-        scaled_ratio_of_width_to_height = float(non_preservative_scaled_rect_size[0]) / float(non_preservative_scaled_rect_size[1])
-        if original_ratio_of_width_to_height == scaled_ratio_of_width_to_height:
-            return non_preservative_scaled_rect_size
-        if original_ratio_of_width_to_height > scaled_ratio_of_width_to_height:
-            return (non_preservative_scaled_rect_size[0], non_preservative_scaled_rect_size[0] * original_ratio_of_height_to_width)
-        return (non_preservative_scaled_rect_size[1] * original_ratio_of_width_to_height, non_preservative_scaled_rect_size[1])
-    
+            
     #from: https://stackoverflow.com/a/42015712
     def blit_text(self, surface: pygame.Surface, text: str, pos: tuple[float, float], font: pygame.font.Font, color=pygame.Color("White")):
         words = [word.split(' ') for word in text.splitlines()]
@@ -51,10 +37,14 @@ class ElementExplanationMessage(pygame.sprite.Sprite):
         return y
     
     def redraw(self, elements):
+        maximum_x_drawn_on = 0
+        maximum_y_drawn_on = 0
+        
+        temp_image = pygame.Surface((self.background_image.get_width() * 2, self.background_image.get_height() * 2), pygame.SRCALPHA)
         self.element_name_image = pygame.Surface((540, 200), pygame.SRCALPHA).convert_alpha()
         element_name_height = self.blit_text(self.element_name_image, self.element_name + ":", (0,0), self.pixelated_font)
         
-        self.element_name_image = pygame.transform.scale_by(self.element_name_image, 0.75)
+        self.element_name_image = pygame.transform.scale_by(self.element_name_image.subsurface((0,0), ((self.background_image.get_width() * (1.0/0.75)) - 25,element_name_height)), 0.75)
         element_name_height = float(element_name_height) * 0.75
         
         self.element_description_image = pygame.Surface((540, 200), pygame.SRCALPHA).convert_alpha()
@@ -71,11 +61,15 @@ class ElementExplanationMessage(pygame.sprite.Sprite):
         self.element_description_rect = pygame.Rect((25,2 + element_name_height), (self.element_description_image.get_rect().width, element_description_height))
         if len(self.recipe.ingredients[0]) > 0:
             self.ingredients_text_rect = pygame.Rect((25,self.element_description_rect.top + element_description_height), self.ingredients_text_image.get_rect().size)
-        self.image.blit(self.element_name_image, self.element_name_rect)
-        self.image.blit(self.element_description_image, self.element_description_rect)
+        temp_image.blit(self.element_name_image, self.element_name_rect)
+        maximum_x_drawn_on = max(maximum_x_drawn_on, 25 + self.element_name_image.get_width())
+        maximum_y_drawn_on = max(maximum_y_drawn_on, (self.element_description_rect.top + element_description_height) + self.element_name_image.get_height())
+        temp_image.blit(self.element_description_image, self.element_description_rect)
+        maximum_x_drawn_on = max(maximum_x_drawn_on, self.element_description_rect.left + self.element_description_image.get_width())
+        maximum_y_drawn_on = max(maximum_y_drawn_on, self.element_description_rect.top + self.element_description_image.get_height())
         if len(self.recipe.ingredients[0]) > 0:
-            temp_ingredients_surface = pygame.Surface((self.image.get_rect().size[0] * 2, self.image.get_rect().size[1] * 2), pygame.SRCALPHA)
-            self.image.blit(self.ingredients_text_image, self.ingredients_text_rect)
+            temp_ingredients_surface = pygame.Surface((temp_image.get_rect().size[0], temp_image.get_rect().size[1]), pygame.SRCALPHA)
+            temp_image.blit(self.ingredients_text_image, self.ingredients_text_rect)
             counter = 0
             x = 25
             y = self.ingredients_text_rect.top + self.ingredients_text_rect.height
@@ -97,7 +91,14 @@ class ElementExplanationMessage(pygame.sprite.Sprite):
                 x += ingredient_required_amount.get_rect().width + 5
                 counter += 1
             temp_ingredients_surface = pygame.transform.scale_by(temp_ingredients_surface.subsurface((25, self.ingredients_text_rect.top + self.ingredients_text_rect.height), (temp_ingredients_surface.get_width() - 25,y)).copy(), 0.5)
-            self.image.blit(temp_ingredients_surface, (25, self.ingredients_text_rect.top + self.ingredients_text_rect.height))
+            temp_image.blit(temp_ingredients_surface, (25, self.ingredients_text_rect.top + self.ingredients_text_rect.height))
+            maximum_x_drawn_on = max(maximum_x_drawn_on, 25 + temp_ingredients_surface.get_width())
+            maximum_y_drawn_on = max(maximum_y_drawn_on, (self.ingredients_text_rect.top + self.ingredients_text_rect.height) + temp_ingredients_surface.get_height())
+        temp_image = temp_image.subsurface((0,0),(maximum_x_drawn_on, maximum_y_drawn_on))
+        ratio_of_change_in_size = min(float(self.background_image.get_width()) / float(temp_image.get_width()), float(self.background_image.get_height() - 50) / float(temp_image.get_height()))
+        temp_image = pygame.transform.smoothscale_by(temp_image, ratio_of_change_in_size)
+        self.image = self.background_image.copy()
+        self.image.blit(temp_image, (0,0))
         self.original_image = self.image.copy()
     
     def draw(self, screen: pygame.Surface):
