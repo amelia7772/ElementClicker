@@ -74,22 +74,29 @@ class ElementExplanationMessage(pygame.sprite.Sprite):
         self.image.blit(self.element_name_image, self.element_name_rect)
         self.image.blit(self.element_description_image, self.element_description_rect)
         if len(self.recipe.ingredients[0]) > 0:
-            temp_ingredients_surface = pygame.Surface((self.image.get_rect().size[0] * 2, self.image.get_rect().size[0] * 2), pygame.SRCALPHA)
+            temp_ingredients_surface = pygame.Surface((self.image.get_rect().size[0] * 2, self.image.get_rect().size[1] * 2), pygame.SRCALPHA)
             self.image.blit(self.ingredients_text_image, self.ingredients_text_rect)
             counter = 0
             x = 25
+            y = self.ingredients_text_rect.top + self.ingredients_text_rect.height
             for ingredient in self.recipe.ingredients:
                 if counter > 0:
-                    temp_ingredients_surface.blit(self.plus_symbol_image, (x, self.ingredients_text_rect.top + self.ingredients_text_rect.height))
-                    x += self.plus_symbol_image.get_rect().width
+                    if counter % 3 == 0:
+                        y += 55 #ingredient_image.get_height() + 5
+                        x = 25
+                        temp_ingredients_surface.blit(self.plus_symbol_image, (x, y))
+                        x += self.plus_symbol_image.get_rect().width
+                    else:
+                        temp_ingredients_surface.blit(self.plus_symbol_image, (x, y))
+                        x += self.plus_symbol_image.get_rect().width
                 ingredient_image = pygame.transform.scale(elements[int(ingredient[0])]._element_image._element_image_original, (50,50))
                 ingredient_required_amount = self.pixelated_font.render(str(ingredient[1]), False, "White").convert_alpha()
-                temp_ingredients_surface.blit(ingredient_image, (x, self.ingredients_text_rect.top + self.ingredients_text_rect.height))
+                temp_ingredients_surface.blit(ingredient_image, (x, y))
                 x += ingredient_image.get_rect().width + 5
-                temp_ingredients_surface.blit(ingredient_required_amount, (x, self.ingredients_text_rect.top + self.ingredients_text_rect.height))
+                temp_ingredients_surface.blit(ingredient_required_amount, (x, y))
                 x += ingredient_required_amount.get_rect().width + 5
                 counter += 1
-            temp_ingredients_surface = pygame.transform.scale_by(temp_ingredients_surface.subsurface((25, self.ingredients_text_rect.top + self.ingredients_text_rect.height), (min(x - 25, (self.rect.width * 2) - 25), 50)).copy(), 0.5)
+            temp_ingredients_surface = pygame.transform.scale_by(temp_ingredients_surface.subsurface((25, self.ingredients_text_rect.top + self.ingredients_text_rect.height), (temp_ingredients_surface.get_width() - 25,y)).copy(), 0.5)
             self.image.blit(temp_ingredients_surface, (25, self.ingredients_text_rect.top + self.ingredients_text_rect.height))
         self.original_image = self.image.copy()
     
