@@ -30,7 +30,7 @@ quest_scene = QuestScene(background_image)
 timer_for_saving_game = 0.0
 timers_for_factories = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-def evaluate_crafting_timers():
+def evaluate_crafting_timers(crafting_amounts: list[int] = [1 for i in range(0, len(crafting_timers))]):
     counter = 0
     for crafting_timer in crafting_timers:
         recipe = get_recipe_for(ElementType(counter))
@@ -39,11 +39,12 @@ def evaluate_crafting_timers():
                 if len(recipe.ingredients[0]) != 0:
                     for ingredient in recipe.ingredients:
                         if ingredient[2]:
-                            elements.elements[int(ingredient[0])].increase_element_amount(-ingredient[1], Screen.screen)
-                elements.elements[int(recipe.result[0])].increase_element_amount(recipe.result[1], Screen.screen)
+                            elements.elements[int(ingredient[0])].increase_element_amount(-(ingredient[1] * crafting_amounts[counter]), Screen.screen)
+                elements.elements[int(recipe.result[0])].increase_element_amount(recipe.result[1] * crafting_amounts[counter], Screen.screen)
                 reevaluate_recipes_waiting_time()
-                xp_bar.increase_xp(recipe.resulting_xp, Screen.screen)
+                xp_bar.increase_xp(recipe.resulting_xp * crafting_amounts[counter], Screen.screen)
                 crafting_timers[counter] = -1
+                crafting_amounts[counter] = 0
                 elements.elements[int(recipe.result[0])].set_element_is_pressed(False)
                 elements.elements[int(recipe.result[0])]._is_element_currently_being_crafted = False
                 elements.elements[int(recipe.result[0])]._crafting_prorgress = 0.0
@@ -53,13 +54,19 @@ def evaluate_crafting_timers():
             else:
                 elements.elements[int(recipe.result[0])]._crafting_prorgress = (time.time() - crafting_timer) / float(recipe.waiting_time)
         counter += 1
+    return crafting_amounts
 
-def check_for_automatic_crafting(timers_for_factories):
+def check_for_automatic_crafting(timers_for_factories, crafting_amounts: list[int] = [1 for i in range(0, len(crafting_timers))]):
     for i in range(0, 3):
         if elements.elements[int(ElementType.factory_tier_one) + i].element_resource_amount >= 1:
             if main_scene.selected_element_to_be_produced_by_factories[i] >= 0:
+                number_of_items_crafted = 1
                 delay = 1
-                for j in range(1, elements.elements[int(ElementType.factory_tier_one) + i].element_resource_amount):
+                amount_of_times_decreasing_delay = elements.elements[int(ElementType.factory_tier_one) + i].element_resource_amount
+                if amount_of_times_decreasing_delay >= 3:
+                    number_of_items_crafted += amount_of_times_decreasing_delay // 3
+                    amount_of_times_decreasing_delay = amount_of_times_decreasing_delay % 3
+                for j in range(1, amount_of_times_decreasing_delay):
                     delay -= (delay * 0.10)
                 recipe = get_recipe_for(ElementType(main_scene.selected_element_to_be_produced_by_factories[i]))
                 if timers_for_factories[i] >= delay or elements.elements[ElementType(main_scene.selected_element_to_be_produced_by_factories[i])]._is_element_currently_being_crafted:
@@ -68,15 +75,18 @@ def check_for_automatic_crafting(timers_for_factories):
                     if recipe.waiting_time > 0 and is_craftable(recipe):
                         elements.elements[main_scene.selected_element_to_be_produced_by_factories[i]]._crafting_prorgress = 0.0
                         elements.elements[main_scene.selected_element_to_be_produced_by_factories[i]]._is_element_currently_being_crafted = True
+                        if crafting_amounts[main_scene.selected_element_to_be_produced_by_factories[i]] == 0:
+                            crafting_amounts[main_scene.selected_element_to_be_produced_by_factories[i]] = number_of_items_crafted
                     if elements.elements[main_scene.selected_element_to_be_produced_by_factories[i]].is_element_pressed() and crafting_timers[main_scene.selected_element_to_be_produced_by_factories[i]] == -1:
-                            if is_craftable(recipe):
-                                craft(recipe, Screen.screen)
-                                reevaluate_recipes_waiting_time()
+                            for j in range(0, number_of_items_crafted):
+                                if is_craftable(recipe):
+                                    craft(recipe, Screen.screen)
+                            reevaluate_recipes_waiting_time()
                             if crafting_timers[main_scene.selected_element_to_be_produced_by_factories[i]] == -1:
                                 elements.elements[main_scene.selected_element_to_be_produced_by_factories[i]].set_element_is_pressed(False)
                 else:
                     timers_for_factories[i] += dt
-    return timers_for_factories
+    return timers_for_factories, crafting_amounts
 
 while True:
     dt = time.time() - previous_time
@@ -114,8 +124,8 @@ while True:
         main_scene.resize_scene(Screen.screen.get_size())
         quest_scene.resize_scene(Screen.screen.get_size())
     
-    timers_for_factories = check_for_automatic_crafting(timers_for_factories)
-    evaluate_crafting_timers()
+    timers_for_factories, main_scene.crafting_amounts = check_for_automatic_crafting(timers_for_factories, main_scene.crafting_amounts)
+    main_scene.crafting_amounts = evaluate_crafting_timers(main_scene.crafting_amounts)
     if active_scene == Scene.main:
         main_scene.update(dt, events)
         active_scene = main_scene.get_active_scene()
