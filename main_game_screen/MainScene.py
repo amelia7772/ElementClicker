@@ -33,6 +33,7 @@ class MainScene:
 
         self.element_explanation_message_displayed = -1
         self.selected_element_to_be_produced_by_factories = [-1, -1, -1, -1, -1, -1]
+        self.crafting_amounts = [0 for i in range(0, len(crafting_timers))]
     
     def update(self, dt, events):
         for event in events:
@@ -51,6 +52,7 @@ class MainScene:
                         if get_recipe_for(ElementType(counter)).waiting_time > 0 and is_craftable(get_recipe_for(ElementType(counter))):
                             element._crafting_prorgress = 0.0
                             element._is_element_currently_being_crafted = True
+                            self.crafting_amounts[counter] = 1
                     counter += 1
                 self.element_explanation_message_displayed = -1
                 if self.quest_button.is_highlighted and not self.quest_button.is_ui_element_pressed():
