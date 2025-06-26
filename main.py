@@ -59,7 +59,7 @@ def check_for_automatic_crafting(timers_for_factories):
         if elements.elements[int(ElementType.factory_tier_one) + i].element_resource_amount >= 1:
             if main_scene.selected_element_to_be_produced_by_factories[i] >= 0:
                 delay = 1
-                for i in range(1, elements.elements[int(ElementType.factory_tier_one) + i].element_resource_amount):
+                for j in range(1, elements.elements[int(ElementType.factory_tier_one) + i].element_resource_amount):
                     delay -= (delay * 0.10)
                 recipe = get_recipe_for(ElementType(main_scene.selected_element_to_be_produced_by_factories[i]))
                 if timers_for_factories[i] >= delay or elements.elements[ElementType(main_scene.selected_element_to_be_produced_by_factories[i])]._is_element_currently_being_crafted:
