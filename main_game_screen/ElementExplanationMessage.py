@@ -96,7 +96,7 @@ class ElementExplanationMessage(pygame.sprite.Sprite):
             maximum_y_drawn_on = max(maximum_y_drawn_on, (self.ingredients_text_rect.top + self.ingredients_text_rect.height) + temp_ingredients_surface.get_height())
         temp_image = temp_image.subsurface((0,0),(maximum_x_drawn_on, maximum_y_drawn_on))
         ratio_of_change_in_size = min(float(self.background_image.get_width()) / float(temp_image.get_width()), float(self.background_image.get_height() - 50) / float(temp_image.get_height()))
-        temp_image = pygame.transform.smoothscale_by(temp_image, ratio_of_change_in_size)
+        temp_image = pygame.transform.scale_by(temp_image, ratio_of_change_in_size)
         self.image = self.background_image.copy()
         self.image.blit(temp_image, (0,0))
         self.original_image = self.image.copy()
