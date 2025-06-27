@@ -74,6 +74,8 @@ class MainScene:
                     if element.is_element_pressed() and crafting_timers[counter] == -1:
                         if is_craftable(get_recipe_for(ElementType(counter))):
                             craft(get_recipe_for(ElementType(counter)), Screen.screen)
+                            for k in range(0, len(elements.elements)):
+                                elements.elements[k]._is_element_craftable = is_craftable(get_recipe_for(ElementType(k)))
                             reevaluate_recipes_waiting_time()
                         if crafting_timers[counter] == -1:
                             element.set_element_is_pressed(False)
