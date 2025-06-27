@@ -9,7 +9,8 @@ class ElementText(pygame.sprite.Sprite):
         order_of_magnitude_of_resource_amount = self.__calculate_order_of_magnitude__(resource_amount)
         if order_of_magnitude_of_resource_amount >= 3:
             symbol = order_of_magnitude_to_symbol_map[order_of_magnitude_of_resource_amount - (order_of_magnitude_of_resource_amount % 3)]
-            resource_amount = round(float(resource_amount) / (10.0 ** order_of_magnitude_of_resource_amount), 2)
+            non_rounded_resource_amount = float(resource_amount) / (10.0 ** (order_of_magnitude_of_resource_amount - (order_of_magnitude_of_resource_amount % 3)))
+            resource_amount = round(non_rounded_resource_amount, 2 - self.__calculate_order_of_magnitude__(int(non_rounded_resource_amount)))
         self.image = font.render(str(resource_amount) + symbol, False, "White").convert_alpha()
         self._element_text_original = self.image.copy()
         self.rect = self.image.get_rect()
