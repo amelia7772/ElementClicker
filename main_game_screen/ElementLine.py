@@ -5,7 +5,7 @@ import math
 import os
 from utilities.Ellipse import Ellipse
 from main_game_screen.ElementExplanationMessage import ElementExplanationMessage
-
+from utilities.BigNumberMap import order_of_magnitude_to_symbol_map
 
 class ElementLine(pygame.sprite.Group):
     def __init__(self, position: tuple[float, float], element_tier: int,element_image_path: str, background: pygame.Surface, element_explanation_message: ElementExplanationMessage):
@@ -167,10 +167,25 @@ class ElementLine(pygame.sprite.Group):
     def is_element_pressed(self):
         return self._is_element_pressed
     
+    def __calculate_order_of_magnitude__(self, number: int):
+        order_of_magnitude = 0
+        while number > 0:
+            number = number // 10
+            if number > 0:
+                order_of_magnitude += 1
+        return order_of_magnitude
+    
     def increase_element_amount(self, amount_of_increase: int, screen: pygame.Surface):
         self.element_resource_amount += amount_of_increase
         previous_size = self._element_text._element_text_original.get_rect().size
-        self._element_text.image = self.pixelated_font.render(str(self.element_resource_amount), False, "White").convert_alpha()
+        
+        resource_amount = self.element_resource_amount
+        symbol = ""
+        order_of_magnitude_of_resource_amount = self.__calculate_order_of_magnitude__(resource_amount)
+        if order_of_magnitude_of_resource_amount >= 3:
+            symbol = order_of_magnitude_to_symbol_map[order_of_magnitude_of_resource_amount - (order_of_magnitude_of_resource_amount % 3)]
+            resource_amount = round(float(resource_amount) / (10.0 ** order_of_magnitude_of_resource_amount), 2)
+        self._element_text.image = self.pixelated_font.render(str(resource_amount) + symbol, False, "White").convert_alpha()
         self._element_text._element_text_original = self._element_text.image.copy()
         
         self._element_text.rect.size = self._element_text.image.get_rect().size
