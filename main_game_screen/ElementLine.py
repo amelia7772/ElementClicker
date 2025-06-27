@@ -60,6 +60,11 @@ class ElementLine(pygame.sprite.Group):
         self.element_explanation_message.rect.bottomleft = self._crafting_prorgress_ellipse_empty[0].topright
         self._element_explanation_message_rect_float_size: tuple[float, float] = self.element_explanation_message.rect.size
         
+        self._is_element_craftable = False
+        self._non_craftable_image = Element(element_image_path)
+        self._non_craftable_image.image.fill(pygame.color.Color(0,0,0, 150), None, pygame.BLEND_RGBA_SUB)
+        self._non_craftable_image._element_image_original = self._non_craftable_image.image.copy()
+        
     def reposition_elements(self):
         element_line_of_objects_rect = pygame.Rect(0,0,0,0)
         element_line_of_objects_rect.size = (self._element_image_rect_float_size[0] + self._element_text_rect_float_size[0]  + 10 * self._ratio_of_change_in_width, max(self._element_image_rect_float_size[1], self._element_text_rect_float_size[1]))
@@ -71,6 +76,8 @@ class ElementLine(pygame.sprite.Group):
         self._hightliter_ellipse.float_left = float(self._hightliter_ellipse.left)
         self._element_text.rect.top = self._element_image.rect.top
         self._element_text.rect.left = self._element_image.rect.right + 20 * self._ratio_of_change_in_width
+        
+        self._non_craftable_image.rect = self._element_image.rect.copy()
         
         self._crafting_prorgress_ellipse_empty[0].center = self._element_image.rect.center
         self._crafting_prorgress_ellipse_empty[1] = 5 * ((self._ratio_of_change_in_width +  self._ratio_of_change_in_height) / 2)
@@ -88,6 +95,8 @@ class ElementLine(pygame.sprite.Group):
         self._hightliter_ellipse.float_left = float(self._hightliter_ellipse.left)
         self._element_text.rect.top = self._element_image.rect.top
         self._element_text.rect.left = self._element_image.rect.right + 20 * self._ratio_of_change_in_width
+        
+        self._non_craftable_image.rect = self._element_image.rect.copy()
         
         self._crafting_prorgress_ellipse_empty[0].center = self._element_image.rect.center
         self._crafting_prorgress_ellipse_empty[1] = 5 * ((self._ratio_of_change_in_width +  self._ratio_of_change_in_height) / 2)
@@ -138,6 +147,8 @@ class ElementLine(pygame.sprite.Group):
         self._element_text.rect.size = (round(self._element_text_rect_float_size[0]), round(self._element_text_rect_float_size[1]))
         self.element_explanation_message.rect.size = (round(self._element_explanation_message_rect_float_size[0]), round(self._element_explanation_message_rect_float_size[1]))
         
+        self._non_craftable_image.rect = self._element_image.rect.copy()
+        
         self._crafting_prorgress_ellipse_empty[0] = pygame.Rect((0,0), self.scale_rect_without_changing_aspect_ratio(self._crafting_prorgress_ellipse_empty[0].size, (self._element_image._element_image_rect_original_size[0] + 25, self._element_image._element_image_rect_original_size[1] + 25), change_in_width, change_in_height))
         self._crafting_prorgress_ellipse_empty[0].center = self._element_image.rect.center
         self._crafting_prorgress_ellipse_empty[1] = 5 * ((self._ratio_of_change_in_width +  self._ratio_of_change_in_height) / 2)
@@ -146,6 +157,7 @@ class ElementLine(pygame.sprite.Group):
         self._hightliter_ellipse.size = self._crafting_prorgress_ellipse_empty[0].size
         
         self._element_image.image = pygame.transform.scale(self._element_image._element_image_original, self._element_image.rect.size)
+        self._non_craftable_image.image = pygame.transform.scale(self._non_craftable_image._element_image_original, self._non_craftable_image.rect.size)
         self._element_text.image = pygame.transform.scale(self._element_text._element_text_original, self._element_text.rect.size)
         
         self._ratio_of_non_preservative_change_in_width *= change_in_width
@@ -206,7 +218,10 @@ class ElementLine(pygame.sprite.Group):
         if self.is_available:
             if self._element_image.rect.colliderect(screen_rect):
                 screen.blit(self._element_background, self._crafting_prorgress_ellipse_empty[0])
-                screen.blit(self._element_image.image, self._element_image.rect)
+                if self._is_element_craftable:
+                    screen.blit(self._element_image.image, self._element_image.rect)
+                else:
+                    screen.blit(self._non_craftable_image.image, self._non_craftable_image.rect)
             if self._element_text.rect.colliderect(screen_rect):
                 screen.blit(self._element_text.image, self._element_text.rect)
             if self._hightliter_ellipse.colliderect(screen_rect) and (self.is_highlighted or self._is_element_pressed):
