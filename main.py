@@ -30,6 +30,9 @@ quest_scene = QuestScene(background_image)
 timer_for_saving_game = 0.0
 timers_for_factories = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
+for i in range(0, len(elements.elements)):
+    elements.elements[i]._is_element_craftable = is_craftable(get_recipe_for(ElementType(i)))
+
 def evaluate_crafting_timers(crafting_amounts: list[int] = [1 for i in range(0, len(crafting_timers))]):
     counter = 0
     for crafting_timer in crafting_timers:
@@ -41,6 +44,8 @@ def evaluate_crafting_timers(crafting_amounts: list[int] = [1 for i in range(0, 
                         if ingredient[2]:
                             elements.elements[int(ingredient[0])].increase_element_amount(-(ingredient[1] * crafting_amounts[counter]), Screen.screen)
                 elements.elements[int(recipe.result[0])].increase_element_amount(recipe.result[1] * crafting_amounts[counter], Screen.screen)
+                for k in range(0, len(elements.elements)):
+                    elements.elements[k]._is_element_craftable = is_craftable(get_recipe_for(ElementType(k)))
                 reevaluate_recipes_waiting_time()
                 xp_bar.increase_xp(recipe.resulting_xp * crafting_amounts[counter], Screen.screen)
                 crafting_timers[counter] = -1
