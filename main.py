@@ -1,12 +1,40 @@
 import pygame
 import os
 import time
+import threading
 
 pygame.init()
 
 from utilities import Screen
 
 background_image = pygame.image.load(os.path.join("assets", "images" ,"background.png")).convert_alpha()
+
+global is_loaded
+is_loaded = False
+
+def load_screen(background_image: pygame.Surface):
+    from loading_screen.LoadingScene import LoadingScene
+    clock = pygame.time.Clock()
+    loading_scene = LoadingScene(background_image)
+    timer_for_loading_dots = 0.0
+    previous_time = 0.0
+    while not is_loaded:
+        dt = time.time() - previous_time
+        previous_time = time.time()
+        timer_for_loading_dots += dt
+        if (timer_for_loading_dots * 1000.0) > 300:
+            loading_scene.number_of_loading_dots = ((timer_for_loading_dots * 1000.0) // 300.0) + 1
+        if timer_for_loading_dots >= 1.0:
+            timer_for_loading_dots = 0.0
+            loading_scene.number_of_loading_dots = 1
+        loading_scene.update()
+        pygame.display.update()
+        clock.tick(120)
+    del loading_scene
+    del clock
+
+loading_screen_thread = threading.Thread(target=load_screen, args=(background_image,))
+loading_screen_thread.start()
 
 from main_game_screen.Elements import *
 from utilities.scene import *
@@ -92,6 +120,8 @@ def check_for_automatic_crafting(timers_for_factories, crafting_amounts: list[in
                 else:
                     timers_for_factories[i] += dt
     return timers_for_factories, crafting_amounts
+
+is_loaded = True
 
 while True:
     dt = time.time() - previous_time
