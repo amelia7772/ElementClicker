@@ -92,12 +92,13 @@ def evaluate_crafting_timers(crafting_amounts: list[int] = [1 for i in range(0, 
     return crafting_amounts
 
 def check_for_automatic_crafting(timers_for_factories, crafting_amounts: list[int] = [1 for i in range(0, len(crafting_timers))]):
-    for i in range(0, 3):
-        if elements.elements[int(ElementType.factory_tier_one) + i].element_resource_amount >= 1:
+    factories_indices: list[int] = [int(ElementType.factory_tier_one), int(ElementType.factory_tier_two), int(ElementType.factory_tier_three)]
+    for i in range(0, len(factories_indices)):
+        if elements.elements[factories_indices[i]].element_resource_amount >= 1:
             if main_scene.selected_element_to_be_produced_by_factories[i] >= 0:
                 number_of_items_crafted = 1
                 delay = 1
-                amount_of_times_decreasing_delay = elements.elements[int(ElementType.factory_tier_one) + i].element_resource_amount
+                amount_of_times_decreasing_delay = elements.elements[factories_indices[i]].element_resource_amount
                 if amount_of_times_decreasing_delay >= 3:
                     number_of_items_crafted += amount_of_times_decreasing_delay // 3
                     amount_of_times_decreasing_delay = amount_of_times_decreasing_delay % 3
