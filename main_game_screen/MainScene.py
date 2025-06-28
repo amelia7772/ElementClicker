@@ -7,12 +7,15 @@ from quest_screen.QuestButton import *
 from utilities.Scene import *
 from utilities.SaveManager import *
 from utilities import Screen
+from marketplace_screen.MarketplaceButton import MarketplaceButton
 
 class MainScene:
     def __init__(self, background_image: pygame.Surface):
         self.background_image = background_image.copy()
-        self.quest_button = QuestButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"quest button icon.png")).convert_alpha())
         
+        self.quest_button = QuestButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"quest button icon.png")).convert_alpha())
+        self.marketplace_button = MarketplaceButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"marketplace button icon.png")).convert_alpha())
+
         self.active_scene = Scene.main
 
         reevaluate_recipes_waiting_time()
@@ -37,6 +40,8 @@ class MainScene:
                     mouse_position = pygame.mouse.get_pos()
                     element.is_highlighted = element._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                     self.quest_button.is_highlighted = self.quest_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
+                    self.marketplace_button.is_highlighted = self.marketplace_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
+
                     
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
                 counter = 0
@@ -52,6 +57,8 @@ class MainScene:
                 self.element_explanation_message_displayed = -1
                 if self.quest_button.is_highlighted and not self.quest_button.is_ui_element_pressed():
                     self.quest_button.set_ui_element_is_pressed(True)
+                if self.marketplace_button.is_highlighted and not self.marketplace_button.is_ui_element_pressed():
+                    self.marketplace_button.set_ui_element_is_pressed(True)
             
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[2]:
                 is_no_element_highlighted = True
@@ -78,6 +85,9 @@ class MainScene:
                 if self.quest_button.is_ui_element_pressed():
                     self.quest_button.set_ui_element_is_pressed(False)
                     self.active_scene = Scene.quest_scene
+                if self.marketplace_button.is_ui_element_pressed():
+                    self.marketplace_button.set_ui_element_is_pressed(False)
+                    self.active_scene = Scene.marketplace_scene
             elif event.type == pygame.MOUSEWHEEL:
                 zoom_speed = event.y * 0.1
                 for element in elements.elements:
@@ -137,8 +147,10 @@ class MainScene:
             element.resize_elements(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]),ratio_of_change_in_size)
                     
         xp_bar.resize_xp_elements(Screen.screen, float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
+        
         self.quest_button.resize_ui_element(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
-                        
+        self.marketplace_button.resize_ui_element(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
+
         self.screen_size = Screen.screen.get_size()
                     
         for element in elements.elements:
