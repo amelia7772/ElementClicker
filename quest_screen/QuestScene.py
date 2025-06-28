@@ -92,7 +92,7 @@ class QuestScene:
         self.marketplace_button.draw(Screen.screen)
     
     def set_active_scene(self, active_scene: Scene):
-        if self.active_scene is not active_scene:
+        if self.active_scene != active_scene:
             mouse_position = pygame.mouse.get_pos()
             self.quest_button.is_highlighted = self.quest_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
             self.marketplace_button.is_highlighted = self.marketplace_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
