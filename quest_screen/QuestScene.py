@@ -89,6 +89,7 @@ class QuestScene:
         quest_line.draw(Screen.screen)
         
         self.quest_button.draw(Screen.screen)
+        self.marketplace_button.draw(Screen.screen)
     
     def set_active_scene(self, active_scene: Scene):
         self.active_scene = active_scene
