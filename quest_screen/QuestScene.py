@@ -10,11 +10,10 @@ from utilities import Screen
 from quest_screen.QuestLine import *
 
 class QuestScene:
+    
     def __init__(self, background_image: pygame.Surface):
         self.background_image = background_image.copy()
         self.quest_button = QuestButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"quest button icon.png")).convert_alpha())
-        
-        self.save_manager = SaveManager()
         
         self.screen_size = Screen.screen.get_size()
         self.previous_size = self.screen_size
