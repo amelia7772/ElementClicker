@@ -1,7 +1,5 @@
 import pygame
-from sys import exit
 import os
-import time
 from xpbar.XpBar import *
 from main_game_screen.Elements import *
 from crafting.CraftingManager import *
@@ -9,14 +7,11 @@ from quest_screen.QuestButton import *
 from utilities.Scene import *
 from utilities.SaveManager import *
 from utilities import Screen
-from quest_screen import QuestLine
 
 class MainScene:
     def __init__(self, background_image: pygame.Surface):
         self.background_image = background_image.copy()
         self.quest_button = QuestButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"quest button icon.png")).convert_alpha())
-        
-        self.save_manager = SaveManager()
         
         self.active_scene = Scene.main
 
