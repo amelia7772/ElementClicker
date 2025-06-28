@@ -93,6 +93,13 @@ class QuestScene:
     
     def set_active_scene(self, active_scene: Scene):
         self.active_scene = active_scene
+        
+        mouse_position = pygame.mouse.get_pos()
+        self.quest_button.is_highlighted = self.quest_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
+        self.marketplace_button.is_highlighted = self.marketplace_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
+        for quest in quests:
+            quest.quest_ui_icon.is_highlighted = quest.quest_ui_icon._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
+
     
     def get_active_scene(self):
         return self.active_scene
