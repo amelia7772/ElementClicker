@@ -41,7 +41,6 @@ class MainScene:
                     element.is_highlighted = element._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                     self.quest_button.is_highlighted = self.quest_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                     self.marketplace_button.is_highlighted = self.marketplace_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
-
                     
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
                 counter = 0
@@ -132,7 +131,9 @@ class MainScene:
                 elements.elements[self.element_explanation_message_displayed].element_explanation_message.draw(Screen.screen)
         
         xp_bar.draw(Screen.screen)
+        
         self.quest_button.draw(Screen.screen)
+        self.marketplace_button.draw(Screen.screen)
     
     def set_active_scene(self, active_scene: Scene):
         self.active_scene = active_scene
