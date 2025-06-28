@@ -99,6 +99,8 @@ class QuestScene:
     def resize_scene(self, new_size: tuple[int, int]):
                     
         self.quest_button.resize_ui_element(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
+        self.marketplace_button.resize_ui_element(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
+
         quest_line.resize_questline(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
                     
         self.screen_size = Screen.screen.get_size()
