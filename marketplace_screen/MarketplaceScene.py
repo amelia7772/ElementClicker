@@ -39,10 +39,10 @@ class MarketplaceScene:
             elif event.type == pygame.MOUSEBUTTONUP:
                 if self.quest_button.is_ui_element_pressed():
                     self.quest_button.set_ui_element_is_pressed(False)
-                    self.active_scene = Scene.main
+                    self.active_scene = Scene.quest_scene
                 if self.marketplace_button.is_ui_element_pressed():
                     self.marketplace_button.set_ui_element_is_pressed(False)
-                    self.active_scene = Scene.marketplace_scene
+                    self.active_scene = Scene.main
         
         for x in range(0, Screen.screen.get_width(), self.background_image.get_width()):
             for y in range(0, Screen.screen.get_height(), self.background_image.get_height()):
