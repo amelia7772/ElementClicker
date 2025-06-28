@@ -1,5 +1,4 @@
 import pygame
-from sys import exit
 import os
 from xpbar.XpBar import *
 from main_game_screen.Elements import *
