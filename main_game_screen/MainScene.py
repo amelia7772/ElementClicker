@@ -136,14 +136,14 @@ class MainScene:
         self.marketplace_button.draw(Screen.screen)
     
     def set_active_scene(self, active_scene: Scene):
-        self.active_scene = active_scene
-        
-        mouse_position = pygame.mouse.get_pos()
-        for element in elements.elements:
-            element.is_highlighted = element._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
-        self.quest_button.is_highlighted = self.quest_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
-        self.marketplace_button.is_highlighted = self.marketplace_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
-    
+        if self.active_scene is not active_scene:
+            mouse_position = pygame.mouse.get_pos()
+            for element in elements.elements:
+                element.is_highlighted = element._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
+            self.quest_button.is_highlighted = self.quest_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
+            self.marketplace_button.is_highlighted = self.marketplace_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
+            self.active_scene = active_scene
+            
     def get_active_scene(self):
         return self.active_scene
     
