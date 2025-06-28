@@ -42,6 +42,7 @@ from main_game_screen.MainScene import *
 from quest_screen.QuestScene import *
 from utilities.SaveManager import *
 from quest_screen.QuestLine import *
+from marketplace_screen.MarketplaceScene import *
 
 Screen.screen.fill((194, 255, 250))
 
@@ -54,6 +55,7 @@ previous_time = time.time()
 
 main_scene = MainScene(background_image)
 quest_scene = QuestScene(background_image)
+marketplace_scene = MarketplaceScene(background_image)
 
 timer_for_saving_game = 0.0
 timers_for_factories = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -139,25 +141,30 @@ while True:
         elif event.type == pygame.VIDEORESIZE and not pygame.display.is_fullscreen():
             main_scene.previous_size = main_scene.screen_size
             quest_scene.previous_size = quest_scene.screen_size
+            marketplace_scene.previous_size = marketplace_scene.screen_size
             if event.size[0] >= 800 and event.size[1] >= 400:
                 Screen.screen = pygame.display.set_mode(event.size, pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
             else:
                 Screen.screen = pygame.display.set_mode((800,400), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
             main_scene.resize_scene(Screen.screen.get_size())
             quest_scene.resize_scene(Screen.screen.get_size())
+            marketplace_scene.resize_scene(Screen.screen.get_size())
                 
     if pygame.key.get_pressed()[pygame.key.key_code("f11")]:
         if not pygame.display.is_fullscreen():
             main_scene.previous_size = Screen.screen.get_size()
             quest_scene.previous_size = Screen.screen.get_size()
+            marketplace_scene.previous_size = Screen.screen.get_size()
             Screen.screen = pygame.display.set_mode(pygame.display.list_modes()[0])
             Screen.screen = pygame.display.set_mode(pygame.display.list_modes()[0], pygame.FULLSCREEN)
         else:
             Screen.screen = pygame.display.set_mode(main_scene.previous_size, pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
             main_scene.previous_size = Screen.monitor_size
             quest_scene.previous_size = Screen.monitor_size
+            marketplace_scene.previous_size = Screen.monitor_size
         main_scene.resize_scene(Screen.screen.get_size())
         quest_scene.resize_scene(Screen.screen.get_size())
+        marketplace_scene.resize_scene(Screen.screen.get_size())
     
     timers_for_factories, main_scene.crafting_amounts = check_for_automatic_crafting(timers_for_factories, main_scene.crafting_amounts)
     main_scene.crafting_amounts = evaluate_crafting_timers(main_scene.crafting_amounts)
@@ -165,9 +172,17 @@ while True:
         main_scene.update(dt, events)
         active_scene = main_scene.get_active_scene()
         quest_scene.set_active_scene(active_scene)
+        marketplace_scene.set_active_scene(active_scene)
     elif active_scene == Scene.quest_scene:
         quest_scene.update(dt, events)
         active_scene = quest_scene.get_active_scene()
         main_scene.set_active_scene(active_scene)
+        marketplace_scene.set_active_scene(active_scene)
+    elif active_scene == Scene.marketplace_scene:
+        marketplace_scene.update(dt, events)
+        active_scene = marketplace_scene.get_active_scene()
+        main_scene.set_active_scene(active_scene)
+        quest_scene.set_active_scene(active_scene)
+    
     pygame.display.update()
     clock.tick(120)
