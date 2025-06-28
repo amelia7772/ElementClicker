@@ -7,13 +7,16 @@ from utilities.Scene import *
 from utilities.SaveManager import *
 from utilities import Screen
 from quest_screen.QuestLine import *
+from marketplace_screen.MarketplaceButton import MarketplaceButton
 
 class QuestScene:
     
     def __init__(self, background_image: pygame.Surface):
         self.background_image = background_image.copy()
-        self.quest_button = QuestButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"quest button icon.png")).convert_alpha())
         
+        self.quest_button = QuestButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"quest button icon.png")).convert_alpha())
+        self.marketplace_button = MarketplaceButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"marketplace button icon.png")).convert_alpha())
+
         self.screen_size = Screen.screen.get_size()
         self.previous_size = self.screen_size
         
@@ -24,12 +27,15 @@ class QuestScene:
             if event.type == pygame.MOUSEMOTION:
                 mouse_position = pygame.mouse.get_pos()
                 self.quest_button.is_highlighted = self.quest_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
+                self.marketplace_button.is_highlighted = self.marketplace_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                 for quest in quests:
                     quest.quest_ui_icon.is_highlighted = quest.quest_ui_icon._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                     
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
                 if self.quest_button.is_highlighted and not self.quest_button.is_ui_element_pressed():
                     self.quest_button.set_ui_element_is_pressed(True)
+                if self.marketplace_button.is_highlighted and not self.marketplace_button.is_ui_element_pressed():
+                    self.marketplace_button.set_ui_element_is_pressed(True)
                 for quest in quests:
                     if quest.quest_ui_icon.is_highlighted and not quest.quest_ui_icon.is_ui_element_pressed():
                         quest.quest_ui_icon.set_ui_element_is_pressed(True)
@@ -39,6 +45,9 @@ class QuestScene:
                 if self.quest_button.is_ui_element_pressed():
                     self.quest_button.set_ui_element_is_pressed(False)
                     self.active_scene = Scene.main
+                if self.marketplace_button.is_ui_element_pressed():
+                    self.marketplace_button.set_ui_element_is_pressed(False)
+                    self.active_scene = Scene.marketplace_scene
                 for quest in quests:
                     if quest.quest_ui_icon.is_ui_element_pressed():
                         quest.quest_ui_icon.set_ui_element_is_pressed(False)
