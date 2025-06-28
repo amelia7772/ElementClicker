@@ -37,7 +37,7 @@ loading_screen_thread = threading.Thread(target=load_screen, args=(background_im
 loading_screen_thread.start()
 
 from main_game_screen.Elements import *
-from utilities.scene import *
+from utilities.Scene import *
 from main_game_screen.MainScene import *
 from quest_screen.QuestScene import *
 from utilities.SaveManager import *
