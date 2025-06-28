@@ -4,7 +4,7 @@ import os
 from xpbar.XpBar import *
 from main_game_screen.Elements import *
 from quest_screen.QuestButton import *
-from utilities.scene import *
+from utilities.Scene import *
 from utilities.SaveManager import *
 from utilities import Screen
 from quest_screen.QuestLine import *
