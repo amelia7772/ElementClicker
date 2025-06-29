@@ -6,6 +6,7 @@ from quest_screen.QuestButton import QuestButton
 from marketplace_screen.MarketplaceButton import MarketplaceButton
 from utilities.UiElement import UiElement
 from marketplace_screen import Money
+from utilities.BigNumberMap import order_of_magnitude_to_symbol_map
 
 class MarketplaceScene:
     
@@ -27,7 +28,16 @@ class MarketplaceScene:
         
         self.shadow_bounding_box_rect = pygame.Rect((float(Screen.screen.get_width()) / 2) - (0.5 * float(shadow_bounding_box_surface.get_width())) + self.position_offset[0], self.position_offset[1],float(shadow_bounding_box_surface.get_width()), float(shadow_bounding_box_surface.get_height()))
         
-        money_amount_text_surface = self.pixelated_font.render(f'${Money.money}',False,pygame.Color(0, 255, 0)).convert_alpha()
+        money_amount = Money.money
+        
+        order_of_magnitude_of_money_amount = self.__calculate_order_of_magnitude__(money_amount)
+        if order_of_magnitude_of_money_amount >= 3:
+            symbol = order_of_magnitude_to_symbol_map[order_of_magnitude_of_money_amount - (order_of_magnitude_of_money_amount % 3)]
+            non_rounded_money_amount = float(money_amount) / (10.0 ** (order_of_magnitude_of_money_amount - (order_of_magnitude_of_money_amount % 3)))
+            money_amount = round(non_rounded_money_amount, 2 - self.__calculate_order_of_magnitude__(int(non_rounded_money_amount)))
+        
+        money_amount_text_surface = self.pixelated_font.render(f'${money_amount}' + symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+        
         self.money_amount_text = UiElement([money_amount_text_surface], [(float(money_amount_text_surface.get_width()), float(money_amount_text_surface.get_height()))])
         self.money_amount_text.resize_ui_element((float(self.shadow_bounding_box_rect.width) * (7.0 / 56.0)) / self.money_amount_text.sizes[0][0], (float(self.shadow_bounding_box_rect.height) * (7.0 / 56.0)) / self.money_amount_text.sizes[0][1])
         self.money_amount_text_rect = pygame.Rect(0.0,0.0, self.money_amount_text.sizes[0][0],self.money_amount_text.sizes[0][1])
@@ -176,6 +186,14 @@ class MarketplaceScene:
             
     def get_active_scene(self):
         return self.active_scene
+    
+    def __calculate_order_of_magnitude__(self, number: int):
+        order_of_magnitude = 0
+        while number > 0:
+            number = number // 10
+            if number > 0:
+                order_of_magnitude += 1
+        return order_of_magnitude
     
     def resize_scene(self, new_size: tuple[int,int]):
         self.quest_button.resize_ui_element(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
