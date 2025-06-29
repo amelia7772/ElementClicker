@@ -30,13 +30,15 @@ class MarketplaceScene:
         
         money_amount = Money.money
         
+        order_of_magnitude_symbol = ""
+        
         order_of_magnitude_of_money_amount = self.__calculate_order_of_magnitude__(money_amount)
         if order_of_magnitude_of_money_amount >= 3:
-            symbol = order_of_magnitude_to_symbol_map[order_of_magnitude_of_money_amount - (order_of_magnitude_of_money_amount % 3)]
+            order_of_magnitude_symbol = order_of_magnitude_to_symbol_map[order_of_magnitude_of_money_amount - (order_of_magnitude_of_money_amount % 3)]
             non_rounded_money_amount = float(money_amount) / (10.0 ** (order_of_magnitude_of_money_amount - (order_of_magnitude_of_money_amount % 3)))
             money_amount = round(non_rounded_money_amount, 2 - self.__calculate_order_of_magnitude__(int(non_rounded_money_amount)))
         
-        money_amount_text_surface = self.pixelated_font.render(f'${money_amount}' + symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+        money_amount_text_surface = self.pixelated_font.render(f'${money_amount}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
         
         self.money_amount_text = UiElement([money_amount_text_surface], [(float(money_amount_text_surface.get_width()), float(money_amount_text_surface.get_height()))])
         self.money_amount_text.resize_ui_element((float(self.shadow_bounding_box_rect.width) * (7.0 / 56.0)) / self.money_amount_text.sizes[0][0], (float(self.shadow_bounding_box_rect.height) * (7.0 / 56.0)) / self.money_amount_text.sizes[0][1])
