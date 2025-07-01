@@ -11,6 +11,7 @@ from marketplace_screen.GoodsLine import GoodsLine
 from main_game_screen.ElementType import ElementType
 from main_game_screen.Elements import elements
 from math import floor
+import math
 
 class MarketplaceScene:
     
@@ -31,6 +32,14 @@ class MarketplaceScene:
         self.marketplace_button = MarketplaceButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"marketplace button icon.png")).convert_alpha())
         
         self.scroll_offset = 0.0
+        
+        self.scroll_initial_offset = self.scroll_offset
+        
+        self.scroll_acceleration = 0.0
+        
+        self.scroll_speed = 0.0
+        
+        self.scroll_target_height = 0.0
         
         self.redraw()
         
@@ -91,7 +100,10 @@ class MarketplaceScene:
                 self.amount_per_transaction_button = UiElement([self._amount_per_transaction_is_hundred__surface], [(float(self._amount_per_transaction_is_hundred__surface.get_width()), float(self._amount_per_transaction_is_hundred__surface.get_height()))], True)
             else:
                 for goods_line in self.goods_lines:
-                    goods_line.element_transaction_amount = max(1, elements.elements[int(goods_line.element_id)].element_resource_amount)
+                    if goods_line.is_transaction_sell:
+                        goods_line.element_transaction_amount = max(1, elements.elements[int(goods_line.element_id)].element_resource_amount)
+                    else:
+                        goods_line.element_transaction_amount = max(1, floor(float(Money.money) / float(goods_line.price_buy)))
                     goods_line.redraw_element_transaction_amount_text_surface()
                     goods_line.redraw_element_price_number_text()
                 self.amount_per_transaction_button = UiElement([self._amount_per_transaction_is_max__surface], [(float(self._amount_per_transaction_is_max__surface.get_width()), float(self._amount_per_transaction_is_max__surface.get_height()))], True)
@@ -116,14 +128,20 @@ class MarketplaceScene:
             self.type_of_transaction_button_rect.top = int(float(self.money_amount_text_rect.top) + (0.25 * float(self.money_amount_text_rect.height)))
 
             for goods_line in self.goods_lines:
+                if self.amount_per_transaction_option == 3:
+                    if is_type_of_transaction_sell:
+                        goods_line.element_transaction_amount = max(1, elements.elements[int(goods_line.element_id)].element_resource_amount)
+                    else:
+                        goods_line.element_transaction_amount = max(1, floor(float(Money.money) / float(goods_line.price_buy)))
+                    goods_line.redraw_element_transaction_amount_text_surface()
                 goods_line.set_is_transaction_sell(is_type_of_transaction_sell)
             
-    def set_position_offset(self, position_offset: tuple[float, float]):
-        self.position_offset = position_offset
+    def set_scroll_offset(self, scroll_offset: float):
+        self.scroll_offset = scroll_offset
         self.reposition_ui()
     
-    def get_position_offset(self):
-        return self.position_offset
+    def get_scroll_offset(self):
+        return self.scroll_offset
     
     def reposition_ui(self):
         self.shadow_bounding_box_rect = pygame.Rect((float(Screen.screen.get_width()) / 2) - (0.5 * float(self.shadow_bounding_box_surface.get_width())), 0.0,float(self.shadow_bounding_box_surface.get_width()), float(self.shadow_bounding_box_surface.get_height()))
@@ -141,7 +159,23 @@ class MarketplaceScene:
         self.type_of_transaction_button_rect.top = int(float(self.money_amount_text_rect.top) + (0.25 * float(self.money_amount_text_rect.height)))
         
         self.goods_scroll_rect.topleft = (float(self.shadow_bounding_box_rect.left) + 0.05 * float(self.shadow_bounding_box_rect.width), self.money_amount_text_rect.bottom + (float(self.shadow_bounding_box_rect.height) / 16.0))
+    
+    def update_scroll_offset(self, dt):
+        self.scroll_acceleration = (30 * (float(Screen.screen.get_height()) / 400.0)) * ((self.scroll_initial_offset + ((self.scroll_target_height - self.scroll_initial_offset) / 2.0)) - self.scroll_offset)
         
+        next_scroll_offset = self.scroll_offset + ((0.5 * self.scroll_acceleration * (dt * dt)) + (self.scroll_speed * dt))
+        
+        if (((self.scroll_target_height - self.scroll_initial_offset) > 0 and (next_scroll_offset <= self.scroll_target_height))\
+            or ((self.scroll_target_height - self.scroll_initial_offset) < 0 and (next_scroll_offset >= self.scroll_target_height))):
+        
+            self.scroll_offset = next_scroll_offset
+        
+            self.scroll_speed += self.scroll_acceleration * dt
+        else:
+            self.scroll_speed = 0.0
+            self.scroll_offset = self.scroll_target_height
+            self.scroll_initial_offset = self.scroll_offset
+    
     def update(self, dt, events):
         Screen.screen.fill((46, 46, 46))
         
@@ -155,7 +189,7 @@ class MarketplaceScene:
 
                 for i in range(0, len(self.goods_lines)):
                     transaction_button_rect = self.goods_lines[i].transaction_button_rect.copy()
-                    transaction_button_rect.top += self.goods_scroll_rect.top
+                    transaction_button_rect.top += self.goods_scroll_rect.top + self.scroll_offset
                     transaction_button_rect.left += self.goods_scroll_rect.left
                     self.goods_lines[i].set_is_transaction_button_highlighted(transaction_button_rect.collidepoint(float(mouse_position[0]), float(mouse_position[1])))
             
@@ -195,7 +229,22 @@ class MarketplaceScene:
                         self.goods_lines[i].set_is_transaction_button_pressed(False)
                         self.goods_lines[i].perform_transaction()
                         self.update_money_amount_text()
-                        
+                        if self.amount_per_transaction_option == 3:
+                            for goods_line in self.goods_lines:
+                                if goods_line.is_transaction_sell:
+                                    goods_line.element_transaction_amount = max(1, elements.elements[int(goods_line.element_id)].element_resource_amount)
+                                else:
+                                    goods_line.element_transaction_amount = max(1, floor(float(Money.money) / float(goods_line.price_buy)))
+                                goods_line.redraw_element_transaction_amount_text_surface()
+            elif event.type == pygame.MOUSEWHEEL:
+                self.scroll_initial_offset = self.scroll_offset
+                self.scroll_target_height = min(0.0, max(-float(self.goods_lines[len(self.goods_lines) - 1].bounding_box.bottom) - float(self.goods_lines[0].bounding_box.height) + float(self.goods_scroll_rect.height), self.scroll_target_height + float((event.y) * 20)))
+                if event.y > 0:
+                    self.scroll_acceleration = min(300 * (float(Screen.screen.get_height()) / 400.0), self.scroll_acceleration + (30 * (float(Screen.screen.get_height()) / 400.0)))
+                else:
+                    self.scroll_acceleration = max(-300 * (float(Screen.screen.get_height()) / 400.0), self.scroll_acceleration - (30 * (float(Screen.screen.get_height()) / 400.0)))
+        
+        self.update_scroll_offset(dt)
         
         for x in range(0, Screen.screen.get_width(), self.background_image.get_width()):
             for y in range(0, Screen.screen.get_height(), self.background_image.get_height()):
@@ -212,7 +261,7 @@ class MarketplaceScene:
         self.goods_scroll_surface = pygame.Surface(self.goods_scroll_rect.size, pygame.SRCALPHA)
         
         for goods_line in self.goods_lines:
-            goods_line.draw(self.goods_scroll_surface)
+            goods_line.draw(self.goods_scroll_surface, self.scroll_offset)
         
         Screen.screen.blit(self.goods_scroll_surface, self.goods_scroll_rect)
         
@@ -262,17 +311,17 @@ class MarketplaceScene:
         self.type_of_transaction_button_rect.top = int(float(self.money_amount_text_rect.top) + (0.25 * float(self.money_amount_text_rect.height)))
         
         
-        goods: list[tuple[ElementType,float, float]] = [(ElementType.wood, 0.0, 1234.2)]
+        goods: list[tuple[ElementType,float, float]] = [(ElementType.wood, 1, 1), (ElementType.rock, 2, 1), (ElementType.water, 10, 3), (ElementType.dirt, 10, 3)]
         
-        self.goods_scroll_surface = pygame.Surface((0.9 * float(self.shadow_bounding_box_rect.width), (len(goods) * (0.9 * float(self.shadow_bounding_box_rect.width)) / 4.0) + ((len(goods) - 1) * (0.9 * float(self.shadow_bounding_box_rect.width)) / 16.0)), pygame.SRCALPHA).convert_alpha()
-        self.goods_scroll_rect = pygame.Rect(float(self.shadow_bounding_box_rect.left) + 0.05 * float(self.shadow_bounding_box_rect.width), self.money_amount_text_rect.bottom + (float(self.shadow_bounding_box_rect.height) / 16.0), self.goods_scroll_surface.get_width(), self.goods_scroll_surface.get_height())
+        self.goods_scroll_surface = pygame.Surface((0.9 * float(self.shadow_bounding_box_rect.width), Screen.screen.get_height() - (float(self.money_amount_text_rect.bottom) + (float(self.shadow_bounding_box_rect.height) / 16.0))), pygame.SRCALPHA).convert_alpha()
+        self.goods_scroll_rect = pygame.Rect(float(self.shadow_bounding_box_rect.left) + 0.05 * float(self.shadow_bounding_box_rect.width), float(self.money_amount_text_rect.bottom) + (float(self.shadow_bounding_box_rect.height) / 16.0), self.goods_scroll_surface.get_width(), self.goods_scroll_surface.get_height())
         
         self.goods_lines: list[GoodsLine] = []
         
         y = 0.0
         
         for i in range(0, len(goods)):
-            bounding_box = pygame.Rect(0, y + self.scroll_offset, 0.9 * float(self.shadow_bounding_box_rect.width), (0.9 * float(self.shadow_bounding_box_rect.width)) / 4.0)
+            bounding_box = pygame.Rect(0, y, 0.9 * float(self.shadow_bounding_box_rect.width), (0.9 * float(self.shadow_bounding_box_rect.width)) / 4.0)
             self.goods_lines.append(GoodsLine(bounding_box, goods[i][0], goods[i][1], goods[i][2]))
             y += bounding_box.height + ((0.9 * float(self.shadow_bounding_box_rect.width)) / 16.0)
 
@@ -294,13 +343,13 @@ class MarketplaceScene:
         self.type_of_transaction_button.resize_ui_element(float(self.amount_per_transaction_button_rect.width) / float(self.type_of_transaction_button.sizes[0][0]), float(self.amount_per_transaction_button_rect.height) / float(self.type_of_transaction_button.sizes[0][1]))
         self.type_of_transaction_button_rect = pygame.Rect(0.0, 0.0, self.type_of_transaction_button.sizes[0][0], self.type_of_transaction_button.sizes[0][1])
         
-        self.goods_scroll_surface = pygame.Surface((0.9 * float(self.shadow_bounding_box_rect.width), (len(self.goods_lines) * (0.9 * float(self.shadow_bounding_box_rect.width)) / 4.0) + ((len(self.goods_lines) - 1) * (0.9 * float(self.shadow_bounding_box_rect.width)) / 16.0)), pygame.SRCALPHA).convert_alpha()
-        self.goods_scroll_rect = pygame.Rect(float(self.shadow_bounding_box_rect.left) + 0.05 * float(self.shadow_bounding_box_rect.width), self.money_amount_text_rect.bottom + (float(self.shadow_bounding_box_rect.height) / 16.0), self.goods_scroll_surface.get_width(), self.goods_scroll_surface.get_height())
+        self.goods_scroll_surface = pygame.Surface((0.9 * float(self.shadow_bounding_box_rect.width), Screen.screen.get_height() - (float(self.money_amount_text_rect.bottom) + (float(self.shadow_bounding_box_rect.height) / 16.0))), pygame.SRCALPHA).convert_alpha()
+        self.goods_scroll_rect = pygame.Rect(float(self.shadow_bounding_box_rect.left) + 0.05 * float(self.shadow_bounding_box_rect.width), float(self.money_amount_text_rect.bottom) + (float(self.shadow_bounding_box_rect.height) / 16.0), self.goods_scroll_surface.get_width(), self.goods_scroll_surface.get_height())
         
         y = 0.0
 
         for i in range(0, len(self.goods_lines)):
-            bounding_box = pygame.Rect(0.0, y + self.scroll_offset, 0.9 * float(self.shadow_bounding_box_rect.width), (0.9 * float(self.shadow_bounding_box_rect.width)) / 4.0)
+            bounding_box = pygame.Rect(0.0, y, 0.9 * float(self.shadow_bounding_box_rect.width), (0.9 * float(self.shadow_bounding_box_rect.width)) / 4.0)
             self.goods_lines[i].set_bounding_box(bounding_box)
             y += float(bounding_box.height) + ((0.9 * float(self.shadow_bounding_box_rect.width)) / 16.0)
             
