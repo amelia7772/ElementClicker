@@ -19,7 +19,6 @@ class SaveManager:
         for quest in quests:
             buffer += struct.pack('<1b', quest.is_completed)
         buffer += struct.pack('<d', Money.money)
-        print(buffer)
         if save_file.writable():
             save_file.write(buffer)
         save_file.close()
@@ -28,7 +27,6 @@ class SaveManager:
         try:
             save_file = open("save.bin", 'rb')
             if save_file.readable():
-                print(((len(elements.elements) + 2) * 4) + len(elements.elements) + len(quests) + 8)
                 buffer = save_file.read(((len(elements.elements) + 2) * 4) + len(elements.elements) + len(quests) + 8)
                 resources = struct.unpack(f'<{len(elements.elements) + 2}i{len(elements.elements) + len(quests)}bd', buffer)
                 counter = 0
