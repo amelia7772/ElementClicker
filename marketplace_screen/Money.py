@@ -1,2 +1,2 @@
 global money
-money = 0
+money:float = 0.0
