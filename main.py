@@ -174,11 +174,15 @@ while True:
         active_scene = main_scene.get_active_scene()
         quest_scene.set_active_scene(active_scene)
         marketplace_scene.set_active_scene(active_scene)
+        if active_scene == Scene.marketplace_scene:
+            marketplace_scene.redraw()
     elif active_scene == Scene.quest_scene:
         quest_scene.update(dt, events)
         active_scene = quest_scene.get_active_scene()
         main_scene.set_active_scene(active_scene)
         marketplace_scene.set_active_scene(active_scene)
+        if active_scene == Scene.marketplace_scene:
+            marketplace_scene.redraw()
     elif active_scene == Scene.marketplace_scene:
         marketplace_scene.update(dt, events)
         active_scene = marketplace_scene.get_active_scene()
