@@ -244,6 +244,15 @@ class MarketplaceScene:
                 else:
                     self.scroll_acceleration = max(-300 * (float(Screen.screen.get_height()) / 400.0), self.scroll_acceleration - (30 * (float(Screen.screen.get_height()) / 400.0)))
         
+        if pygame.key.get_pressed()[pygame.key.key_code("w")]:
+            self.scroll_initial_offset = self.scroll_offset
+            self.scroll_target_height = min(0.0, max(-float(self.goods_lines[len(self.goods_lines) - 1].bounding_box.bottom) - float(self.goods_lines[0].bounding_box.height) + float(self.goods_scroll_rect.height), self.scroll_target_height + 5.0))
+            self.scroll_acceleration = min(300 * (float(Screen.screen.get_height()) / 400.0), self.scroll_acceleration + (30 * (float(Screen.screen.get_height()) / 400.0)))
+        if pygame.key.get_pressed()[pygame.key.key_code("s")]:
+            self.scroll_initial_offset = self.scroll_offset
+            self.scroll_target_height = min(0.0, max(-float(self.goods_lines[len(self.goods_lines) - 1].bounding_box.bottom) - float(self.goods_lines[0].bounding_box.height) + float(self.goods_scroll_rect.height), self.scroll_target_height  - 5.0))
+            self.scroll_acceleration = max(-300 * (float(Screen.screen.get_height()) / 400.0), self.scroll_acceleration - (30 * (float(Screen.screen.get_height()) / 400.0)))
+        
         self.update_scroll_offset(dt)
         
         for x in range(0, Screen.screen.get_width(), self.background_image.get_width()):
