@@ -80,7 +80,7 @@ class GoodsLine:
             self.check_transaction_button_surface()
             self.resize_transaction_button()
             if is_transaction_sell:
-                self.is_transaction_viable = (elements.elements[int(self.element_id)].element_resource_amount >= 1)
+                self.is_transaction_viable = (elements.elements[int(self.element_id)].element_resource_amount >= self.element_transaction_amount)
             else:
                 self.is_transaction_viable = (Money.money >= (self.price_buy * self.element_transaction_amount))
             self.redraw_element_price_number_text()
@@ -94,7 +94,10 @@ class GoodsLine:
         self.reposition_ui_elements()
     
     def redraw_element_price_number_text(self):
+        self.recheck_price_color()
+        
         if self.is_transaction_sell:
+            
             price_sell = self.price_sell * self.element_transaction_amount
             
             order_of_magnitude_symbol = ""
@@ -106,11 +109,11 @@ class GoodsLine:
                 price_sell = round(non_rounded_price_sell, 2 - self.__calculate_order_of_magnitude__(int(non_rounded_price_sell)))
                 
             if float(floor(price_sell)) == price_sell:
-                element_price_number_text_surface = self.pixelated_font.render(f'${int(price_sell)}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+                element_price_number_text_surface = self.pixelated_font.render(f'${int(price_sell)}' + order_of_magnitude_symbol,False, self.price_color).convert_alpha()
             elif float(floor(price_sell * 10.0) / 10.0) == price_sell:
-                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_sell * 10.0) / 10.0}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_sell * 10.0) / 10.0}' + order_of_magnitude_symbol,False, self.price_color).convert_alpha()
             else:
-                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_sell * 100.0) / 100.0}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_sell * 100.0) / 100.0}' + order_of_magnitude_symbol,False, self.price_color).convert_alpha()
         else:
             price_buy = self.price_buy * self.element_transaction_amount
             
@@ -123,14 +126,19 @@ class GoodsLine:
                 price_buy = round(non_rounded_price_buy, 2 - self.__calculate_order_of_magnitude__(int(non_rounded_price_buy)))
                 
             if float(floor(price_buy)) == price_buy:
-                element_price_number_text_surface = self.pixelated_font.render(f'${int(price_buy)}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+                element_price_number_text_surface = self.pixelated_font.render(f'${int(price_buy)}' + order_of_magnitude_symbol,False, self.price_color).convert_alpha()
             elif float(floor(price_buy * 10.0) / 10.0) == price_buy:
-                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_buy * 10.0) / 10.0}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_buy * 10.0) / 10.0}' + order_of_magnitude_symbol,False, self.price_color).convert_alpha()
             else:
-                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_buy * 100.0) / 100.0}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_buy * 100.0) / 100.0}' + order_of_magnitude_symbol,False, self.price_color).convert_alpha()
         
         self.element_price_number_text = UiElement([element_price_number_text_surface], [(float(element_price_number_text_surface.get_width()), float(element_price_number_text_surface.get_height()))])
         self.element_price_number_text.resize_ui_element((0.2 * float(self.bounding_box.width)) / float(element_price_number_text_surface.get_width()), (float(self.element_name_text.sizes[0][1]) / 2.0) / float(element_price_number_text_surface.get_height()))
+        
+        element_price_text_surface = self.pixelated_font.render("price:", False, self.price_color)
+        
+        self.element_price_text = UiElement([element_price_text_surface], [(float(element_price_text_surface.get_width()), float(element_price_text_surface.get_height()))])
+        self.element_price_text.resize_ui_element(((0.2 * 0.6) * float(self.bounding_box.width)) / float(element_price_text_surface.get_width()), (float(self.element_name_text.sizes[0][1]) / 2.0) / float(element_price_text_surface.get_height()))
         
         self.reposition_ui_elements()
         
@@ -181,6 +189,9 @@ class GoodsLine:
         self.resize_ui_elements()
 
     def resize_ui_elements(self):
+        
+        self.recheck_price_color()
+        
         self.element_icon = UiElement([pygame.transform.scale(elements.element_background, (int(float(self.bounding_box.width) / 4.0), int(float(self.bounding_box.width) / 4.0))), pygame.transform.scale(elements.elements[int(self.element_id)]._element_image.image, (int((3.0 / 4.0) * (float(self.bounding_box.width) / 4.0)), int((3.0 / 4.0) * (float(self.bounding_box.width) / 4.0))))], [(int(float(self.bounding_box.width) / 4.0), int(float(self.bounding_box.width) / 4.0)), (int((3.0 / 4.0) * (float(self.bounding_box.width) / 4.0)), int((3.0 / 4.0) * (float(self.bounding_box.width) / 4.0)))])
         
         element_name_text_surface = self.pixelated_font.render(elements.elements[int(self.element_id)].element_explanation_message.element_name, False, pygame.Color(255,255,255))
@@ -193,7 +204,7 @@ class GoodsLine:
         self.element_transaction_amount_text  = UiElement([element_transaction_amount_text_surface], [(float(element_transaction_amount_text_surface.get_width()), float(element_transaction_amount_text_surface.get_height()))])
         self.element_transaction_amount_text.resize_ui_element((0.2 * float(self.bounding_box.width)) / float(element_transaction_amount_text_surface.get_width()), (float(self.element_name_text.sizes[0][1]) / 2.0) / float(element_transaction_amount_text_surface.get_height()))
         
-        element_price_text_surface = self.pixelated_font.render("price:", False, pygame.Color(0,255,54))
+        element_price_text_surface = self.pixelated_font.render("price:", False, self.price_color)
         
         self.element_price_text = UiElement([element_price_text_surface], [(float(element_price_text_surface.get_width()), float(element_price_text_surface.get_height()))])
         self.element_price_text.resize_ui_element(((0.2 * 0.6) * float(self.bounding_box.width)) / float(element_price_text_surface.get_width()), (float(self.element_name_text.sizes[0][1]) / 2.0) / float(element_price_text_surface.get_height()))
@@ -210,11 +221,11 @@ class GoodsLine:
                 price_sell = round(non_rounded_price_sell, 2 - self.__calculate_order_of_magnitude__(int(non_rounded_price_sell)))
                 
             if float(floor(price_sell)) == price_sell:
-                element_price_number_text_surface = self.pixelated_font.render(f'${int(price_sell)}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+                element_price_number_text_surface = self.pixelated_font.render(f'${int(price_sell)}' + order_of_magnitude_symbol,False, self.price_color).convert_alpha()
             elif float(floor(price_sell * 10.0) / 10.0) == price_sell:
-                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_sell * 10.0) / 10.0}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_sell * 10.0) / 10.0}' + order_of_magnitude_symbol,False, self.price_color).convert_alpha()
             else:
-                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_sell * 100.0) / 100.0}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_sell * 100.0) / 100.0}' + order_of_magnitude_symbol,False, self.price_color).convert_alpha()
         else:
             price_buy = self.price_buy * self.element_transaction_amount
             
@@ -227,11 +238,11 @@ class GoodsLine:
                 price_buy = round(non_rounded_price_buy, 2 - self.__calculate_order_of_magnitude__(int(non_rounded_price_buy)))
                 
             if float(floor(price_buy)) == price_buy:
-                element_price_number_text_surface = self.pixelated_font.render(f'${int(price_buy)}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+                element_price_number_text_surface = self.pixelated_font.render(f'${int(price_buy)}' + order_of_magnitude_symbol,False, self.price_color).convert_alpha()
             elif float(floor(price_buy * 10.0) / 10.0) == price_buy:
-                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_buy * 10.0) / 10.0}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_buy * 10.0) / 10.0}' + order_of_magnitude_symbol,False, self.price_color).convert_alpha()
             else:
-                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_buy * 100.0) / 100.0}' + order_of_magnitude_symbol,False,pygame.Color(0, 255, 0)).convert_alpha()
+                element_price_number_text_surface = self.pixelated_font.render(f'${floor(price_buy * 100.0) / 100.0}' + order_of_magnitude_symbol,False, self.price_color).convert_alpha()
         
         self.element_price_number_text = UiElement([element_price_number_text_surface], [(float(element_price_number_text_surface.get_width()), float(element_price_number_text_surface.get_height()))])
         self.element_price_number_text.resize_ui_element((0.2 * float(self.bounding_box.width)) / float(element_price_number_text_surface.get_width()), (float(self.element_name_text.sizes[0][1]) / 2.0) / float(element_price_number_text_surface.get_height()))
@@ -281,10 +292,20 @@ class GoodsLine:
         self.element_price_number_text_rect.left = self.element_amount_number_text_rect.left - money_symbol_text.sizes[0][0]
         self.element_price_number_text_rect.top = self.element_price_text_rect.top
         
-        
         self.transaction_button_rect.right = self.bounding_box.right
         self.transaction_button_rect.centery = self.bounding_box.centery
     
+    def recheck_price_color(self):
+        if self.is_transaction_sell:
+            self.is_transaction_viable = (elements.elements[int(self.element_id)].element_resource_amount >= self.element_transaction_amount)
+        else:
+            self.is_transaction_viable = (Money.money >= (self.price_buy * self.element_transaction_amount))
+        
+        if self.is_transaction_viable:
+            self.price_color = pygame.Color(0,255,54)
+        else:
+            self.price_color = pygame.Color(255,54,0)
+            
     def draw(self, surface: pygame.Surface, scroll_offset: float = 0.0):
         rect = pygame.Rect(0.0, 0.0, surface.get_width(), surface.get_height())
         element_icon_image_rect = pygame.Rect((0,0), (self.element_icon.sizes[1][0], self.element_icon.sizes[1][1]))
