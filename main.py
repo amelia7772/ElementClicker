@@ -2,7 +2,7 @@ import pygame
 import os
 import time
 import threading
-
+from sys import exit
 pygame.init()
 
 from utilities import Screen
