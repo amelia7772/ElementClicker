@@ -37,7 +37,6 @@ transaction_button_sell_amount_not_matched_hovered_over_surface = pygame.image.l
 class GoodsLine:
     
     def __init__(self, bounding_box: pygame.Rect, element_id: ElementType, price_buy: float, price_sell: float, is_available = False):
-        self.position_offset = (0.0,0.0)
         self.bounding_box = bounding_box
         
         self.element_id = element_id
@@ -58,19 +57,9 @@ class GoodsLine:
         self.is_transaction_viable = (elements.elements[int(self.element_id)].element_resource_amount >= 1)
         
         self.resize_ui_elements()
-
-    def set_position_offset(self, position_offset: tuple[float,float]):
-        self.bounding_box.left -= int(self.position_offset[0])
-        self.bounding_box.top -= int(self.position_offset[1])
-        self.position_offset = position_offset
-        self.bounding_box.left += int(self.position_offset[0])
-        self.bounding_box.top += int(self.position_offset[1])
-        self.reposition_ui_elements()
         
     def set_bounding_box(self, bounding_box: pygame.Rect):
         self.bounding_box = bounding_box
-        self.bounding_box.left += int(self.position_offset[0])
-        self.bounding_box.top += int(self.position_offset[1])
         self.resize_ui_elements()
     
     def set_is_transaction_button_highlighted(self, is_highlighted: bool):
@@ -296,17 +285,52 @@ class GoodsLine:
         self.transaction_button_rect.right = self.bounding_box.right
         self.transaction_button_rect.centery = self.bounding_box.centery
     
-    def draw(self, surface: pygame.Surface):
+    def draw(self, surface: pygame.Surface, scroll_offset: float = 0.0):
+        rect = pygame.Rect(0.0, 0.0, surface.get_width(), surface.get_height())
         element_icon_image_rect = pygame.Rect((0,0), (self.element_icon.sizes[1][0], self.element_icon.sizes[1][1]))
         element_icon_image_rect.center = self.element_icon_rect.center
-        self.element_icon.draw(surface, [self.element_icon_rect.topleft, element_icon_image_rect.topleft])
-        self.element_name_text.draw(surface, [self.element_name_text_rect.topleft])
-        self.element_transaction_amount_text.draw(surface, [self.element_transaction_amount_text_rect.topleft])
-        self.element_price_text.draw(surface, [self.element_price_text_rect.topleft])
-        self.element_price_number_text.draw(surface, [self.element_price_number_text_rect.topleft])
-        self.element_amount_text.draw(surface, [self.element_amount_text_rect.topleft])
-        self.element_amount_number_text.draw(surface, [self.element_amount_number_text_rect.topleft])
-        self.transaction_button.draw(surface, [self.transaction_button_rect.topleft])
+        element_icon_image_rect.top += scroll_offset
+        
+        element_icon_rect = self.element_icon_rect.copy()
+        element_icon_rect.top += scroll_offset
+        
+        element_name_text_rect = self.element_name_text_rect.copy()
+        element_name_text_rect.top += scroll_offset
+        
+        element_transaction_amount_text_rect = self.element_transaction_amount_text_rect.copy()
+        element_transaction_amount_text_rect.top += scroll_offset
+        
+        element_price_text_rect = self.element_price_text_rect.copy()
+        element_price_text_rect.top += scroll_offset
+        
+        element_price_number_text_rect = self.element_price_number_text_rect.copy()
+        element_price_number_text_rect.top += scroll_offset
+        
+        element_amount_text_rect = self.element_amount_text_rect.copy()
+        element_amount_text_rect.top += scroll_offset
+        
+        element_amount_number_text_rect = self.element_amount_number_text_rect.copy()
+        element_amount_number_text_rect.top += scroll_offset
+        
+        transaction_button_rect = self.transaction_button_rect.copy()
+        transaction_button_rect.top += scroll_offset
+        
+        if rect.colliderect(element_icon_rect):
+            self.element_icon.draw(surface, [element_icon_rect.topleft, element_icon_image_rect.topleft])
+        if rect.colliderect(element_name_text_rect):
+            self.element_name_text.draw(surface, [element_name_text_rect.topleft])
+        if rect.colliderect(element_transaction_amount_text_rect):
+            self.element_transaction_amount_text.draw(surface, [element_transaction_amount_text_rect.topleft])
+        if rect.colliderect(element_price_text_rect):
+            self.element_price_text.draw(surface, [element_price_text_rect.topleft])
+        if rect.colliderect(element_price_number_text_rect):
+            self.element_price_number_text.draw(surface, [element_price_number_text_rect.topleft])
+        if rect.colliderect(element_amount_text_rect):
+            self.element_amount_text.draw(surface, [element_amount_text_rect.topleft])
+        if rect.colliderect(element_amount_number_text_rect):
+            self.element_amount_number_text.draw(surface, [element_amount_number_text_rect.topleft])
+        if rect.colliderect(transaction_button_rect):
+            self.transaction_button.draw(surface, [transaction_button_rect.topleft])
         
     def __calculate_order_of_magnitude__(self, number: int):
         order_of_magnitude = 0
