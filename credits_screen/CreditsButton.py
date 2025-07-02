@@ -3,7 +3,7 @@ from utilities.UiElement import *
 
 class CreditsButton(UiElement):
     def __init__(self, background: pygame.Surface, icon_image: pygame.Surface):
-        super().__init__([background, icon_image], [(65, 65), (50, 50)], True)
+        super().__init__([background, icon_image], [(85, 85), (50, 50)], True)
     
     def draw(self, screen: pygame.Surface):
         background_x = 0
