@@ -3,7 +3,7 @@ from utilities.UiElement import *
 
 class SettingsButton(UiElement):
     def __init__(self, background: pygame.Surface, icon_image: pygame.Surface):
-        super().__init__([background, icon_image], [(65, 65), (50, 50)], True)
+        super().__init__([background, icon_image], [(75, 75), (50, 50)], True)
     
     def draw(self, screen: pygame.Surface):
         background_x = screen.get_width() - self.images[0].get_width()
