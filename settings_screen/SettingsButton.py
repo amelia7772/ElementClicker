@@ -1,10 +1,14 @@
 import pygame
 from utilities.UiElement import *
+from utilities import Screen
 
 class SettingsButton(UiElement):
     def __init__(self, background: pygame.Surface, icon_image: pygame.Surface):
         super().__init__([background, icon_image], [(75, 75), (50, 50)], True)
-    
+        self._hightliter_ellipse.topleft = (Screen.screen.get_width() - self.images[0].get_width(), 0)
+        self._hightliter_ellipse.float_top = float(self._hightliter_ellipse.top)
+        self._hightliter_ellipse.float_left = float(self._hightliter_ellipse.left)
+        
     def draw(self, screen: pygame.Surface):
         background_x = screen.get_width() - self.images[0].get_width()
         background_y = 0
