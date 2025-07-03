@@ -155,7 +155,7 @@ class MainScene:
         self.credits_buttons.draw(Screen.screen)
     
     def set_active_scene(self, active_scene: Scene):
-        if self.active_scene is not active_scene:
+        if self.active_scene != active_scene:
             mouse_position = pygame.mouse.get_pos()
             for element in elements.elements:
                 element.is_highlighted = element._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
