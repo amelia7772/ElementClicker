@@ -1,10 +1,14 @@
 import pygame
 from utilities.UiElement import *
+from utilities import Screen
 
 class MarketplaceButton(UiElement):
     def __init__(self, background: pygame.Surface, icon_image: pygame.Surface):
         super().__init__([background, icon_image], [(75, 75), (50, 50)], True)
-    
+        self._hightliter_ellipse.topleft = (0,Screen.screen.get_height() - self.images[0].get_height())
+        self._hightliter_ellipse.float_top = float(self._hightliter_ellipse.top)
+        self._hightliter_ellipse.float_left = float(self._hightliter_ellipse.left)
+        
     def draw(self, screen: pygame.Surface):
         background_x = 0
         background_y = screen.get_height() - self.images[0].get_height()
