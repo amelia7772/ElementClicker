@@ -46,6 +46,8 @@ class MarketplaceScene:
         
         self.redraw()
         
+        self.initial_bounding_box_height = float(self.goods_lines[0].bounding_box.height)
+        
         self.screen_size = Screen.screen.get_size()
         self.previous_size = self.screen_size
         
@@ -164,7 +166,7 @@ class MarketplaceScene:
         self.goods_scroll_rect.topleft = (float(self.shadow_bounding_box_rect.left) + 0.05 * float(self.shadow_bounding_box_rect.width), self.money_amount_text_rect.bottom + (float(self.shadow_bounding_box_rect.height) / 16.0))
     
     def update_scroll_offset(self, dt):
-        self.scroll_acceleration = (30 * (float(Screen.screen.get_height()) / 400.0)) * ((self.scroll_initial_offset + ((self.scroll_target_height - self.scroll_initial_offset) / 2.0)) - self.scroll_offset)
+        self.scroll_acceleration = (30.0 * (float(Screen.screen.get_height()) / 400.0)) * ((self.scroll_initial_offset + ((self.scroll_target_height - self.scroll_initial_offset) / 2.0)) - self.scroll_offset)
         
         next_scroll_offset = self.scroll_offset + ((0.5 * self.scroll_acceleration * (dt * dt)) + (self.scroll_speed * dt))
         
@@ -252,21 +254,24 @@ class MarketplaceScene:
                                     goods_line.element_transaction_amount = max(1, floor(float(Money.money) / float(goods_line.price_buy)))
                                 goods_line.redraw_element_transaction_amount_text_surface()
             elif event.type == pygame.MOUSEWHEEL:
+                ratio_of_stretch_of_scrolling_surface = (float(self.goods_lines[0].bounding_box.height) / self.initial_bounding_box_height)
                 self.scroll_initial_offset = self.scroll_offset
-                self.scroll_target_height = min(0.0, max(-float(self.goods_lines[len(self.goods_lines) - 1].bounding_box.bottom) - float(self.goods_lines[0].bounding_box.height) + float(self.goods_scroll_rect.height), self.scroll_target_height + float((event.y) * 20)))
+                self.scroll_target_height = min(0.0, max(-float(self.goods_lines[len(self.goods_lines) - 1].bounding_box.bottom) - float(self.goods_lines[0].bounding_box.height) + float(self.goods_scroll_rect.height), self.scroll_target_height + float((event.y) * 20.0 * ratio_of_stretch_of_scrolling_surface)))
                 if event.y > 0:
-                    self.scroll_acceleration = min(300 * (float(Screen.screen.get_height()) / 400.0), self.scroll_acceleration + (30 * (float(Screen.screen.get_height()) / 400.0)))
+                    self.scroll_acceleration = min(300.0, self.scroll_acceleration + (30.0))
                 else:
-                    self.scroll_acceleration = max(-300 * (float(Screen.screen.get_height()) / 400.0), self.scroll_acceleration - (30 * (float(Screen.screen.get_height()) / 400.0)))
+                    self.scroll_acceleration = max(-300.0, self.scroll_acceleration - (30.0))
         
         if pygame.key.get_pressed()[pygame.key.key_code("w")]:
+            ratio_of_stretch_of_scrolling_surface = (float(self.goods_lines[0].bounding_box.height) / self.initial_bounding_box_height)
             self.scroll_initial_offset = self.scroll_offset
-            self.scroll_target_height = min(0.0, max(-float(self.goods_lines[len(self.goods_lines) - 1].bounding_box.bottom) - float(self.goods_lines[0].bounding_box.height) + float(self.goods_scroll_rect.height), self.scroll_target_height + 5.0))
-            self.scroll_acceleration = min(300 * (float(Screen.screen.get_height()) / 400.0), self.scroll_acceleration + (30 * (float(Screen.screen.get_height()) / 400.0)))
+            self.scroll_target_height = min(0.0, max(-float(self.goods_lines[len(self.goods_lines) - 1].bounding_box.bottom) - float(self.goods_lines[0].bounding_box.height) + float(self.goods_scroll_rect.height), self.scroll_target_height + (5.0 * ratio_of_stretch_of_scrolling_surface)))
+            self.scroll_acceleration = min(300.0, self.scroll_acceleration + (30.0))
         if pygame.key.get_pressed()[pygame.key.key_code("s")]:
+            ratio_of_stretch_of_scrolling_surface = (float(self.goods_lines[0].bounding_box.height) / self.initial_bounding_box_height)
             self.scroll_initial_offset = self.scroll_offset
-            self.scroll_target_height = min(0.0, max(-float(self.goods_lines[len(self.goods_lines) - 1].bounding_box.bottom) - float(self.goods_lines[0].bounding_box.height) + float(self.goods_scroll_rect.height), self.scroll_target_height  - 5.0))
-            self.scroll_acceleration = max(-300 * (float(Screen.screen.get_height()) / 400.0), self.scroll_acceleration - (30 * (float(Screen.screen.get_height()) / 400.0)))
+            self.scroll_target_height = min(0.0, max(-float(self.goods_lines[len(self.goods_lines) - 1].bounding_box.bottom) - float(self.goods_lines[0].bounding_box.height) + float(self.goods_scroll_rect.height), self.scroll_target_height  - (5.0 * ratio_of_stretch_of_scrolling_surface)))
+            self.scroll_acceleration = max(-300.0, self.scroll_acceleration - (30.0))
         
         self.update_scroll_offset(dt)
         
@@ -314,7 +319,7 @@ class MarketplaceScene:
     def redraw(self):
         self.shadow_bounding_box_surface = pygame.Surface((int(float(Screen.screen.get_width()) * 0.6), Screen.screen.get_height() * 2),pygame.SRCALPHA)
         
-        self.shadow_bounding_box_surface.fill((0,0,0,int(0.4 * 255)))
+        self.shadow_bounding_box_surface.fill((0,0,0,102))
         
         self.shadow_bounding_box_rect = pygame.Rect((float(Screen.screen.get_width()) / 2) - (0.5 * float(self.shadow_bounding_box_surface.get_width())), 0.0,float(self.shadow_bounding_box_surface.get_width()), float(self.shadow_bounding_box_surface.get_height()))
         
