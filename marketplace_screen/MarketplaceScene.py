@@ -44,6 +44,8 @@ class MarketplaceScene:
         
         self.scroll_target_height = 0.0
         
+        self.is_mouse_wheel_moving = False
+        
         self.redraw()
         
         self.initial_bounding_box_height = float(self.goods_lines[0].bounding_box.height)
@@ -176,7 +178,7 @@ class MarketplaceScene:
             self.scroll_offset = next_scroll_offset
         
             self.scroll_speed += self.scroll_acceleration * dt
-        else:
+        elif (not self.is_mouse_wheel_moving) and (not pygame.key.get_pressed()[pygame.key.key_code("w")]) and (not pygame.key.get_pressed()[pygame.key.key_code("s")]):
             self.scroll_speed = 0.0
             self.scroll_offset = self.scroll_target_height
             self.scroll_initial_offset = self.scroll_offset
@@ -185,6 +187,17 @@ class MarketplaceScene:
         Screen.screen.fill((46, 46, 46))
         
         for event in events:
+            if event.type == pygame.MOUSEWHEEL:
+                self.is_mouse_wheel_moving = True
+                ratio_of_stretch_of_scrolling_surface = (float(self.goods_lines[0].bounding_box.height) / self.initial_bounding_box_height)
+                self.scroll_initial_offset = self.scroll_offset
+                self.scroll_target_height = min(0.0, max(-float(self.goods_lines[len(self.goods_lines) - 1].bounding_box.bottom) - float(self.goods_lines[0].bounding_box.height) + float(self.goods_scroll_rect.height), self.scroll_target_height + float((event.y) * 20.0 * ratio_of_stretch_of_scrolling_surface)))
+                if event.y > 0:
+                    self.scroll_acceleration = min(300.0, self.scroll_acceleration + (30.0))
+                else:
+                    self.scroll_acceleration = max(-300.0, self.scroll_acceleration - (30.0))
+            else:
+                self.is_mouse_wheel_moving = False
             if event.type == pygame.MOUSEMOTION:
                 mouse_position = pygame.mouse.get_pos()
                 self.quest_button.is_highlighted = self.quest_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
@@ -253,14 +266,6 @@ class MarketplaceScene:
                                 else:
                                     goods_line.element_transaction_amount = max(1, floor(float(Money.money) / float(goods_line.price_buy)))
                                 goods_line.redraw_element_transaction_amount_text_surface()
-            elif event.type == pygame.MOUSEWHEEL:
-                ratio_of_stretch_of_scrolling_surface = (float(self.goods_lines[0].bounding_box.height) / self.initial_bounding_box_height)
-                self.scroll_initial_offset = self.scroll_offset
-                self.scroll_target_height = min(0.0, max(-float(self.goods_lines[len(self.goods_lines) - 1].bounding_box.bottom) - float(self.goods_lines[0].bounding_box.height) + float(self.goods_scroll_rect.height), self.scroll_target_height + float((event.y) * 20.0 * ratio_of_stretch_of_scrolling_surface)))
-                if event.y > 0:
-                    self.scroll_acceleration = min(300.0, self.scroll_acceleration + (30.0))
-                else:
-                    self.scroll_acceleration = max(-300.0, self.scroll_acceleration - (30.0))
         
         if pygame.key.get_pressed()[pygame.key.key_code("w")]:
             ratio_of_stretch_of_scrolling_surface = (float(self.goods_lines[0].bounding_box.height) / self.initial_bounding_box_height)
