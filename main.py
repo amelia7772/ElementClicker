@@ -45,6 +45,7 @@ from quest_screen.QuestLine import *
 from marketplace_screen.MarketplaceScene import *
 from settings_screen.SettingsScene import *
 from credits_screen.CreditScene import *
+from utilities.Events import *
 
 Screen.screen.fill((194, 255, 250))
 
@@ -128,6 +129,12 @@ def check_for_automatic_crafting(timers_for_factories, crafting_amounts: list[in
                     timers_for_factories[i] += dt
     return timers_for_factories, crafting_amounts
 
+def evaluate_game_event(game_event: Event, marketplace_scene: MarketplaceScene):
+    if game_event == Event.update_marketplace_goods_availability:
+        for goods_line in marketplace_scene.goods_lines:
+            goods_line.update_availability()
+    return marketplace_scene
+
 is_loaded = True
 
 while True:
@@ -180,6 +187,10 @@ while True:
         marketplace_scene.resize_scene(Screen.screen.get_size())
         settings_scene.resize_scene(Screen.screen.get_size())
         credits_scene.resize_scene(Screen.screen.get_size())
+    
+    for event in game_events:
+        marketplace_scene = evaluate_game_event(event, marketplace_scene)
+    game_events.clear()
     
     timers_for_factories, main_scene.crafting_amounts = check_for_automatic_crafting(timers_for_factories, main_scene.crafting_amounts)
     main_scene.crafting_amounts = evaluate_crafting_timers(main_scene.crafting_amounts)
