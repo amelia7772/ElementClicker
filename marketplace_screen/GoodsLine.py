@@ -81,7 +81,7 @@ class GoodsLine:
             self.resize_transaction_button()
             
     def set_is_transaction_button_pressed(self, is_pressed: bool):
-        if self.is_transaction_button_pressed != is_pressed:
+        if self.is_transaction_button_pressed != is_pressed and self.is_available:
             self.is_transaction_button_pressed = is_pressed
             self.check_transaction_button_surface()
             self.resize_transaction_button()
