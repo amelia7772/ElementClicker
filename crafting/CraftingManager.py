@@ -5,6 +5,7 @@ from main_game_screen.ElementType import ElementType
 from main_game_screen import Elements
 from xpbar import XpBar
 from quest_screen import QuestLine
+from utilities import Events
 import pygame
 import time
 
@@ -85,5 +86,6 @@ def craft(recipe: CraftingRecipe, screen: pygame.Surface):
         for quest in QuestLine.quests:
             if (quest.condition(Elements.elements.elements, XpBar.xp_bar.level)) and (not quest.is_completed):
                 QuestLine.quest_line.set_quest_completed(quest.id, True)
+        Events.game_events.append(Events.Event.update_marketplace_goods_availability)
     else:
         crafting_timers[int(recipe.result[0])] = time.time()
