@@ -10,9 +10,9 @@ from utilities.UiElement import UiElement
 from marketplace_screen import Money
 from utilities.BigNumberMap import order_of_magnitude_to_symbol_map
 from marketplace_screen.GoodsLine import GoodsLine
-from main_game_screen.ElementType import ElementType
 from main_game_screen.Elements import elements
 from math import floor
+from marketplace_screen.Goods import goods
 
 class MarketplaceScene:
     
@@ -348,9 +348,6 @@ class MarketplaceScene:
         self.type_of_transaction_button_rect.centerx = int(float(self.shadow_bounding_box_rect.centerx) + ((0.5 * (2.0/3.0)) * float(self.shadow_bounding_box_rect.width)))
         self.type_of_transaction_button_rect.top = int(float(self.money_amount_text_rect.top) + (0.25 * float(self.money_amount_text_rect.height)))
         
-        
-        goods: list[tuple[ElementType,float, float]] = [(ElementType.wood, 1, 1), (ElementType.rock, 2, 1), (ElementType.water, 10, 3), (ElementType.dirt, 10, 3)]
-        
         self.goods_scroll_surface = pygame.Surface((0.9 * float(self.shadow_bounding_box_rect.width), Screen.screen.get_height() - (float(self.money_amount_text_rect.bottom) + (float(self.shadow_bounding_box_rect.height) / 16.0))), pygame.SRCALPHA).convert_alpha()
         self.goods_scroll_rect = pygame.Rect(float(self.shadow_bounding_box_rect.left) + 0.05 * float(self.shadow_bounding_box_rect.width), float(self.money_amount_text_rect.bottom) + (float(self.shadow_bounding_box_rect.height) / 16.0), self.goods_scroll_surface.get_width(), self.goods_scroll_surface.get_height())
         
@@ -360,7 +357,8 @@ class MarketplaceScene:
         
         for i in range(0, len(goods)):
             bounding_box = pygame.Rect(0, y, 0.9 * float(self.shadow_bounding_box_rect.width), (0.9 * float(self.shadow_bounding_box_rect.width)) / 4.0)
-            self.goods_lines.append(GoodsLine(bounding_box, goods[i][0], goods[i][1], goods[i][2]))
+            goods_id = i
+            self.goods_lines.append(GoodsLine(bounding_box, goods_id))
             y += bounding_box.height + ((0.9 * float(self.shadow_bounding_box_rect.width)) / 16.0)
 
     def resize_scene(self, new_size: tuple[int,int]):
