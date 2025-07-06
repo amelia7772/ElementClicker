@@ -46,13 +46,24 @@ class GoodsLine:
         self.element_id = goods[goods_id][0]
         self.price_buy = goods[goods_id][1]
         self.price_sell = goods[goods_id][2]
-        self.requirement_function = goods[goods_id][4]
+        if len(goods[goods_id][5]) == 0:
+            self.requirement_function = lambda level, _elements: True
+        else:
+            def _requirement_function(_level: int, _elements):
+                is_requirement_of_element_amount_met = True
+                for _element in goods[goods_id][5]:
+                    if _elements[_element[0]].element_resource_amount < _element[1]:
+                        is_requirement_of_element_amount_met = False
+                        break
+                return is_requirement_of_element_amount_met and (_level >= goods[goods_id][4])
+            
+            self.requirement_function = _requirement_function
         if goods[goods_id][3]:
             self.is_available = True
         else:
             if self.requirement_function(xp_bar.level, elements.elements):
                 self.is_available = True
-                goods[goods_id] = (goods[goods_id][0], goods[goods_id][1], goods[goods_id][2], True, goods[goods_id][4])
+                goods[goods_id] = (goods[goods_id][0], goods[goods_id][1], goods[goods_id][2], True, goods[goods_id][4], goods[goods_id][5])
             else:
                 self.is_available = False
         
