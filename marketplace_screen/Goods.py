@@ -1,5 +1,5 @@
 from main_game_screen.ElementType import ElementType
-from types import FunctionType
 
 global goods
-goods: list[tuple[ElementType, float, float, bool,FunctionType]] = [(ElementType.wood, 1, 1, False, lambda level, elements: True), (ElementType.rock, 2, 1, False, lambda level, elements: (elements[ElementType.rock].element_resource_amount >= 1 and level >= 5)), (ElementType.water, 10, 3, False, lambda level, elements: (elements[ElementType.bucket].element_resource_amount >= 1 and level >= 7)), (ElementType.dirt, 10, 3, False, lambda level, elements: (elements[ElementType.iron_shovel].element_resource_amount >= 1 and level >= 10))]
+#element_id, price_buy, price_sell, is_available, level_requirement, element_unlocking_requirement (list of elements that should be unlocked and their amounts)
+goods: list[tuple[ElementType, float, float, bool, int, list[tuple[ElementType, int]]]] = [(ElementType.wood, 1, 1, False, 0, []), (ElementType.rock, 2, 1, False, 5, [(ElementType.rock, 1)]), (ElementType.water, 10, 3, False, 7, [(ElementType.bucket, 1)]), (ElementType.dirt, 10, 3, False, 10, [(ElementType.bucket, 1)])]
