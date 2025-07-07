@@ -24,6 +24,10 @@ class MainScene:
 
         self.previous_mouse_position = (0, 0)
         
+        self.current_movement_position = (0, 0)
+        
+        self.movement_target_position = (0, 0)
+        
         self.active_scene = Scene.main
 
         reevaluate_recipes_waiting_time()
@@ -40,6 +44,41 @@ class MainScene:
         self.element_explanation_message_displayed = -1
         self.selected_element_to_be_produced_by_factories = [-1, -1, -1, -1, -1, -1]
         self.crafting_amounts = [0 for i in range(0, len(crafting_timers))]
+    
+    def update_movement(self, dt):
+        if self.current_movement_position[0] != self.movement_target_position[0] \
+        or self.current_movement_position[1] != self.movement_target_position[1]:
+            if (self.movement_target_position[0] - self.current_movement_position[0]) > 0:
+                movement_in_the_x_axis = max(-3, min(3, 3 * dt * 60.0 * float(self.movement_target_position[0] - self.current_movement_position[0])))
+            elif (self.movement_target_position[0] - self.current_movement_position[0]) < 0:
+                movement_in_the_x_axis = -max(-3, min(3, 3 * dt * 60.0 * abs(float(self.movement_target_position[0] - self.current_movement_position[0]))))
+            else:
+                movement_in_the_x_axis = 0.0
+            if (self.movement_target_position[1] - self.current_movement_position[1]) > 0:
+                movement_in_the_y_axis = max(-3, min(3, 3 * dt * 60.0 * float(self.movement_target_position[1] - self.current_movement_position[1])))
+            elif (self.movement_target_position[1] - self.current_movement_position[1]) < 0:
+                movement_in_the_y_axis = -max(-3, min(3, 3 * dt * 60.0 * abs(float(self.movement_target_position[1] - self.current_movement_position[1]))))
+            else:
+                movement_in_the_y_axis = 0.0
+                
+            if self.current_movement_position[0] > self.movement_target_position[0]:
+                if (self.current_movement_position[0] + movement_in_the_x_axis) < self.movement_target_position[0]:
+                    movement_in_the_x_axis = float(self.movement_target_position[0] - self.current_movement_position[0])
+            else:
+                if (self.current_movement_position[0] + movement_in_the_x_axis) > self.movement_target_position[0]:
+                    movement_in_the_x_axis = float(self.movement_target_position[0] - self.current_movement_position[0])
+            
+            if self.current_movement_position[1] > self.movement_target_position[1]:
+                if (self.current_movement_position[1] + movement_in_the_y_axis) < self.movement_target_position[1]:
+                    movement_in_the_y_axis = float(self.movement_target_position[1] - self.current_movement_position[1])
+            else:
+                if (self.current_movement_position[1] + movement_in_the_y_axis) > self.movement_target_position[1]:
+                    movement_in_the_y_axis = float(self.movement_target_position[1] - self.current_movement_position[1])
+                
+            movement_vector = (movement_in_the_x_axis, movement_in_the_y_axis)
+            self.current_movement_position = (self.current_movement_position[0] + movement_vector[0], self.current_movement_position[1] + movement_vector[1])
+            for element in elements.elements:
+                element.reposition_elements_with_offset((movement_vector[0], movement_vector[1]))
     
     def update(self, dt, events):
         mouse_position = pygame.mouse.get_pos()
@@ -143,21 +182,19 @@ class MainScene:
         movement_speed = 6 * dt * 60
         
         if pygame.key.get_pressed()[pygame.key.key_code("w")]:
-            for element in elements.elements:
-                if element.offset[1] + (1 * movement_speed) <= 1200:
-                    element.reposition_elements_with_offset((0, 1.0 * movement_speed))
+            movement_target_y = min(1200, self.movement_target_position[1] + (1 * movement_speed))
+            self.movement_target_position = (self.movement_target_position[0], movement_target_y)
         if pygame.key.get_pressed()[pygame.key.key_code("s")]:
-            for element in elements.elements:
-                if element.offset[1] + (-1 * movement_speed) <= 1200:
-                    element.reposition_elements_with_offset((0, -1.0 * movement_speed))
+            movement_target_y = max(-1200, self.movement_target_position[1] - (1 * movement_speed))
+            self.movement_target_position = (self.movement_target_position[0], movement_target_y)
         if pygame.key.get_pressed()[pygame.key.key_code("a")]:
-            for element in elements.elements:
-                if element.offset[0] + (1 * movement_speed)<= 1200:
-                    element.reposition_elements_with_offset((1.0 * movement_speed, 0))
+            movement_target_x = min(1200, self.movement_target_position[0] + (1 * movement_speed))
+            self.movement_target_position = (movement_target_x, self.movement_target_position[1])
         if pygame.key.get_pressed()[pygame.key.key_code("d")]:
-            for element in elements.elements:
-                if element.offset[0] + (-1 * movement_speed) <= 1200:
-                    element.reposition_elements_with_offset((-1.0 * movement_speed, 0))
+            movement_target_x = max(-1200, self.movement_target_position[0] - (1 * movement_speed))
+            self.movement_target_position = (movement_target_x, self.movement_target_position[1])
+        
+        self.update_movement(dt)
         
         elements.reevaluate_availability(xp_bar.level)  
         
