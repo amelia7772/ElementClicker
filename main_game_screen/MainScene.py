@@ -20,6 +20,10 @@ class MainScene:
         self.setting_buttons = SettingsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"settings button icon.png")).convert_alpha())
         self.credits_buttons = CreditsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"credits button icon.png")).convert_alpha())
 
+        self.is_mouse_dragging_on_the_background = False
+
+        self.previous_mouse_position = (0, 0)
+        
         self.active_scene = Scene.main
 
         reevaluate_recipes_waiting_time()
@@ -38,9 +42,9 @@ class MainScene:
         self.crafting_amounts = [0 for i in range(0, len(crafting_timers))]
     
     def update(self, dt, events):
+        mouse_position = pygame.mouse.get_pos()
         for event in events:
             if event.type == pygame.MOUSEMOTION:
-                mouse_position = pygame.mouse.get_pos()
                 for element in elements.elements:
                     element.is_highlighted = element._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                 self.quest_button.is_highlighted = self.quest_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
@@ -48,10 +52,20 @@ class MainScene:
                 self.setting_buttons.is_highlighted = self.setting_buttons._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                 self.credits_buttons.is_highlighted = self.credits_buttons._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                 
+                if self.is_mouse_dragging_on_the_background:
+                    for element in elements.elements:
+                        if (element.offset[0] + (mouse_position[0] - self.previous_mouse_position[0])) <= 1200 \
+                            and (element.offset[1] + (mouse_position[1] - self.previous_mouse_position[1])) <= 1200:
+                            element.reposition_elements_with_offset((\
+                                float(mouse_position[0] - self.previous_mouse_position[0]), \
+                                float(mouse_position[1] - self.previous_mouse_position[1])))
+                    self.previous_mouse_position = (mouse_position[0], mouse_position[1])
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
+                is_any_ui_element_pressed = False
                 counter = 0
                 for element in elements.elements:
                     if element.is_highlighted and not element.is_element_pressed():
+                        is_any_ui_element_pressed = True
                         element.set_element_is_pressed(True)
                         self.selected_element_to_be_produced_by_factories[element.element_tier - 1] = counter
                         if get_recipe_for(ElementType(counter)).waiting_time > 0 and is_craftable(get_recipe_for(ElementType(counter))):
@@ -61,13 +75,23 @@ class MainScene:
                     counter += 1
                 self.element_explanation_message_displayed = -1
                 if self.quest_button.is_highlighted and not self.quest_button.is_ui_element_pressed():
+                    is_any_ui_element_pressed = True
                     self.quest_button.set_ui_element_is_pressed(True)
                 if self.marketplace_button.is_highlighted and not self.marketplace_button.is_ui_element_pressed():
+                    is_any_ui_element_pressed = True
                     self.marketplace_button.set_ui_element_is_pressed(True)
                 if self.setting_buttons.is_highlighted and not self.setting_buttons.is_ui_element_pressed():
+                    is_any_ui_element_pressed = True
                     self.setting_buttons.set_ui_element_is_pressed(True)
                 if self.credits_buttons.is_highlighted and not self.credits_buttons.is_ui_element_pressed():
+                    is_any_ui_element_pressed = True
                     self.credits_buttons.set_ui_element_is_pressed(True)
+                
+                if not is_any_ui_element_pressed:
+                    self.previous_mouse_position = (mouse_position[0], mouse_position[1])
+                    self.is_mouse_dragging_on_the_background = True
+                else:
+                    self.is_mouse_dragging_on_the_background = False
             
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[2]:
                 is_no_element_highlighted = True
@@ -80,6 +104,8 @@ class MainScene:
                 if is_no_element_highlighted:
                     self.element_explanation_message_displayed = -1
             elif event.type == pygame.MOUSEBUTTONUP:
+                if self.is_mouse_dragging_on_the_background:
+                    self.is_mouse_dragging_on_the_background = False
                 counter = 0
                 for element in elements.elements:
                     if element.is_element_pressed() and crafting_timers[counter] == -1:
