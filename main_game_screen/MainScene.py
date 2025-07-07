@@ -20,6 +20,8 @@ class MainScene:
         self.setting_buttons = SettingsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"settings button icon.png")).convert_alpha())
         self.credits_buttons = CreditsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"credits button icon.png")).convert_alpha())
 
+        self.resize_ui_buttons()
+        
         self.is_mouse_dragging_on_the_background = False
 
         self.previous_mouse_position = (0, 0)
@@ -49,6 +51,12 @@ class MainScene:
         self.selected_element_to_be_produced_by_factories = [-1, -1, -1, -1, -1, -1]
         self.crafting_amounts = [0 for i in range(0, len(crafting_timers))]
     
+    def resize_ui_buttons(self):
+        self.quest_button.resize_ui_element(75.0 / float(self.quest_button.sizes[0][0]), 75.0 / float(self.quest_button.sizes[0][1]))
+        self.marketplace_button.resize_ui_element(75.0 / float(self.marketplace_button.sizes[0][0]), 75.0 / float(self.marketplace_button.sizes[0][1]))
+        self.setting_buttons.resize_ui_element(75.0 / float(self.setting_buttons.sizes[0][0]), 75.0 / float(self.setting_buttons.sizes[0][1]))
+        self.credits_buttons.resize_ui_element(75.0 / float(self.credits_buttons.sizes[0][0]), 75.0 / float(self.credits_buttons.sizes[0][1]))
+        
     def update_movement(self, dt):
         if self.current_movement_position[0] != self.movement_target_position[0] \
         or self.current_movement_position[1] != self.movement_target_position[1]:
