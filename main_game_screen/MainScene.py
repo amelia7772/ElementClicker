@@ -96,8 +96,8 @@ class MainScene:
                 self.credits_buttons.is_highlighted = self.credits_buttons._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                 
                 if self.is_mouse_dragging_on_the_background:
-                    if (self.current_movement_position[0] + (mouse_position[0] - self.previous_mouse_position[0])) <= 1200 \
-                        and (self.current_movement_position[1] + (mouse_position[1] - self.previous_mouse_position[1])) <= 1200:
+                    if abs(self.movement_target_position[0] + (mouse_position[0] - self.previous_mouse_position[0])) <= (1200 * self.ratio_of_zooming) \
+                        and abs(self.movement_target_position[1] + (mouse_position[1] - self.previous_mouse_position[1])) <= (1200 * self.ratio_of_zooming):
                             self.movement_target_position = (self.movement_target_position[0] + (mouse_position[0] - self.previous_mouse_position[0]), \
                             self.movement_target_position[1] + (mouse_position[1] - self.previous_mouse_position[1]))
                     self.previous_mouse_position = (mouse_position[0], mouse_position[1])
@@ -196,7 +196,8 @@ class MainScene:
         if not (self.movement_change.x == 0.0 and self.movement_change.y == 0.0):
             self.movement_change.normalize()
         
-            self.movement_target_position = (max(-1200, min(1200, self.movement_target_position[0] + int(self.movement_change.x))), max(-1200, min(1200, self.movement_target_position[1] + int(self.movement_change.y))))
+            self.movement_target_position = (max((-1200 * self.ratio_of_zooming), min((1200.0 * self.ratio_of_zooming), self.movement_target_position[0] + int(self.movement_change.x))),\
+                max((-1200 * self.ratio_of_zooming), min((1200.0 * self.ratio_of_zooming), self.movement_target_position[1] + int(self.movement_change.y))))
         
             self.movement_change.x = 0.0
             self.movement_change.y = 0.0
@@ -239,9 +240,13 @@ class MainScene:
         return self.active_scene
     
     def resize_scene(self, new_size: tuple[int,int]):
+        new_ratio_of_zoom = max(0.5, min(2.0, self.ratio_of_zooming * (float(new_size[0]) / float(self.previous_size[0]))))
+        
         for element in elements.elements:
-            element.resize_elements(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
-                    
+            element.resize_elements(new_ratio_of_zoom / self.ratio_of_zooming, new_ratio_of_zoom / self.ratio_of_zooming)
+        
+        self.ratio_of_zooming = new_ratio_of_zoom
+        
         xp_bar.resize_xp_elements(Screen.screen, float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
         
         self.quest_button.resize_ui_element(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
