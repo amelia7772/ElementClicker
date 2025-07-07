@@ -22,7 +22,7 @@ class QuestLine:
         quests.append(Quest(len(quests),"Quick! someone said game of thrones is bad!", os.path.join("assets", "images" ,"iron pitchfork.png"), "Collect an iron pitchfork", lambda elements, level: elements[int(ElementType.iron_pitchfork)].element_resource_amount >= 1, [quests[4]]))
         quests.append(Quest(len(quests),"no actually, it's not just for grim reaper cosplay", os.path.join("assets", "images" ,"iron sickle scythe.png"), "Collect an iron sickle scythe", lambda elements, level: elements[int(ElementType.iron_sickle_scythe)].element_resource_amount >= 1, [quests[4]]))
         quests.append(Quest(len(quests),"... well, at least you have a pickaxe", os.path.join("assets", "images" ,"rock.png"), "Collect 100 rocks (the more pickaxes you have the faster breaking rocks is)", lambda elements, level: elements[int(ElementType.rock)].element_resource_amount >= 100, [quests[5]]))
-        quests.append(Quest(len(quests),"the mountains are made of pebbles", os.path.join("assets", "images" ,"gravil.png"), "Collect a batch of gravil", lambda elements, level: elements[int(ElementType.gravil)].element_resource_amount >= 1, [quests[6]]))
+        quests.append(Quest(len(quests),"the mountains are made of pebbles", os.path.join("assets", "images" ,"gravel.png"), "Collect a batch of gravel", lambda elements, level: elements[int(ElementType.gravel)].element_resource_amount >= 1, [quests[6]]))
         quests.append(Quest(len(quests),"the start of the gold hunt!", os.path.join("assets", "images" ,"sand.png"), "Collect a batch of sand", lambda elements, level: elements[int(ElementType.sand)].element_resource_amount >= 1, [quests[13]]))
         
         self.vertical_margin = 20
