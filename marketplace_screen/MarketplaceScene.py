@@ -46,6 +46,8 @@ class MarketplaceScene:
         
         self.is_mouse_wheel_moving = False
         
+        self.resize_ui_buttons()
+        
         self.redraw()
         
         self.initial_bounding_box_height = float(self.goods_lines[0].bounding_box.height)
@@ -183,6 +185,12 @@ class MarketplaceScene:
                 self.scroll_speed = 0.0
                 self.scroll_offset = self.scroll_target_height
                 self.scroll_initial_offset = self.scroll_offset
+    
+    def resize_ui_buttons(self):
+        self.quest_button.resize_ui_element(75.0 / float(self.quest_button.sizes[0][0]), 75.0 / float(self.quest_button.sizes[0][1]))
+        self.marketplace_button.resize_ui_element(75.0 / float(self.marketplace_button.sizes[0][0]), 75.0 / float(self.marketplace_button.sizes[0][1]))
+        self.setting_buttons.resize_ui_element(75.0 / float(self.setting_buttons.sizes[0][0]), 75.0 / float(self.setting_buttons.sizes[0][1]))
+        self.credits_buttons.resize_ui_element(75.0 / float(self.credits_buttons.sizes[0][0]), 75.0 / float(self.credits_buttons.sizes[0][1]))
     
     def update(self, dt, events):
         Screen.screen.fill((46, 46, 46))
