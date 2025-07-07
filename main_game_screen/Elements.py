@@ -33,7 +33,7 @@ class Elements(pygame.sprite.Group):
         self.elements.append(ElementLine((675,-100), 4, os.path.join("assets", "images" ,"iron pitchfork.png"), self.element_background, ElementExplanationMessage("Iron Pitchfork", "The thing you use when a movie is offensively generic.", get_recipe_for(ElementType.iron_pitchfork), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((-125,50), 4, os.path.join("assets", "images" ,"iron sickle scythe.png"), self.element_background, ElementExplanationMessage("Iron Sickle Scythe", "Yes, I had to look up its name.", get_recipe_for(ElementType.iron_sickle_scythe), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((-125,200), 1, os.path.join("assets", "images" ,"dirt.png"), self.element_background, ElementExplanationMessage("Dirt", "The energy drink of miners!", get_recipe_for(ElementType.dirt), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
-        self.elements.append(ElementLine((-125,350), 2, os.path.join("assets", "images" ,"gravil.png"), self.element_background, ElementExplanationMessage("Gravil", "Might contain small traces of gold, copper, and... cookies?!", get_recipe_for(ElementType.gravil), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+        self.elements.append(ElementLine((-125,350), 2, os.path.join("assets", "images" ,"gravel.png"), self.element_background, ElementExplanationMessage("Gravil", "Might contain small traces of gold, copper, and... cookies?!", get_recipe_for(ElementType.gravel), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((-125,500), 3, os.path.join("assets", "images" ,"sand.png"), self.element_background, ElementExplanationMessage("Sand", "... No, you can't make glass from sand alone.", get_recipe_for(ElementType.sand), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((-400,50), 2, os.path.join("assets", "images" ,"farmland.png"), self.element_background, ElementExplanationMessage("Farmland", "The unpaid internship offices of medieval ages!", get_recipe_for(ElementType.farmland), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((-400,200), 2, os.path.join("assets", "images" ,"wheat seeds.png"), self.element_background, ElementExplanationMessage("Wheat Seeds", "The seeds of the holy crop!", get_recipe_for(ElementType.wheat_seeds), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
@@ -46,9 +46,9 @@ class Elements(pygame.sprite.Group):
         self.elements.append(ElementLine((1300,200), 5, os.path.join("assets", "images" ,"production facility tier 1.png"), self.element_background, ElementExplanationMessage("Factory Tier 1", "produces more of the last item you clicked on, provided it doesn't have ingredients", get_recipe_for(ElementType.factory_tier_one), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((1475,200), 6, os.path.join("assets", "images" ,"production facility tier 2.png"), self.element_background, ElementExplanationMessage("Factory Tier 2", "produces more of the last item you clicked on, provided it's crafted from 1st tier items", get_recipe_for(ElementType.factory_tier_two), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((1650,200), 6, os.path.join("assets", "images" ,"production facility tier 3.png"), self.element_background, ElementExplanationMessage("Factory Tier 3", "produces more of the last item you clicked on, provided it's crafted from 2nd tier items", get_recipe_for(ElementType.factory_tier_three), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
-        self.elements.append(ElementLine((125,500), 4, os.path.join("assets", "images" ,"golden nuggets.png"), self.element_background, ElementExplanationMessage("Golden Nuggets", "some gravil that's soft and malleable, meh, it's probably useless", get_recipe_for(ElementType.golden_nuggets), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
-        self.elements.append(ElementLine((125,650), 3, os.path.join("assets", "images" ,"copper nuggets.png"), self.element_background, ElementExplanationMessage("Copper Nuggets", "some gravil that is sharp and surprisingly strong, I wonder how it tastes...", get_recipe_for(ElementType.copper_nuggets), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
-        self.elements.append(ElementLine((400,500), 5, os.path.join("assets", "images" ,"gold ingot.png"), self.element_background, ElementExplanationMessage("Gold Ingot", "so, you mixed in copper with that soft gravil to make it hard, why not just use copper?", get_recipe_for(ElementType.gold_ingot), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+        self.elements.append(ElementLine((125,500), 4, os.path.join("assets", "images" ,"golden nuggets.png"), self.element_background, ElementExplanationMessage("Golden Nuggets", "some gravel that's soft and malleable, meh, it's probably useless", get_recipe_for(ElementType.golden_nuggets), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+        self.elements.append(ElementLine((125,650), 3, os.path.join("assets", "images" ,"copper nuggets.png"), self.element_background, ElementExplanationMessage("Copper Nuggets", "some gravel that is sharp and surprisingly strong, I wonder how it tastes...", get_recipe_for(ElementType.copper_nuggets), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
+        self.elements.append(ElementLine((400,500), 5, os.path.join("assets", "images" ,"gold ingot.png"), self.element_background, ElementExplanationMessage("Gold Ingot", "so, you mixed in copper with that soft gravel to make it hard, why not just use copper?", get_recipe_for(ElementType.gold_ingot), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         self.elements.append(ElementLine((400,650), 4, os.path.join("assets", "images" ,"copper ingot.png"), self.element_background, ElementExplanationMessage("Copper Ingot", "a strong conductor of electricity, and very hard yet can be easily forged", get_recipe_for(ElementType.copper_ingot), self.element_explanation_background, pygame.Rect((100,0), (300, 217)))))
         
         for element in self.elements:
@@ -81,7 +81,7 @@ class Elements(pygame.sprite.Group):
             self.elements[int(ElementType.iron_pitchfork)].is_available = True
             self.elements[int(ElementType.iron_sickle_scythe)].is_available = True
         if self.elements[int(ElementType.iron_hammer)].element_resource_amount >= 1:
-            self.elements[int(ElementType.gravil)].is_available = True
+            self.elements[int(ElementType.gravel)].is_available = True
             self.elements[int(ElementType.sand)].is_available = True
         if self.elements[int(ElementType.iron_shovel)].element_resource_amount >= 1:
             self.elements[int(ElementType.dirt)].is_available = True
@@ -98,9 +98,9 @@ class Elements(pygame.sprite.Group):
             self.elements[int(ElementType.clay)].is_available = True
         if self.elements[int(ElementType.clay)].element_resource_amount >= 1:
             self.elements[int(ElementType.brick)].is_available = True
-        if (self.elements[int(ElementType.sand)].element_resource_amount >= 4) and (self.elements[int(ElementType.gravil)].element_resource_amount >= 4):
+        if (self.elements[int(ElementType.sand)].element_resource_amount >= 4) and (self.elements[int(ElementType.gravel)].element_resource_amount >= 4):
             self.elements[int(ElementType.cement)].is_available = True
-        if self.elements[int(ElementType.gravil)].element_resource_amount >= 1:
+        if self.elements[int(ElementType.gravel)].element_resource_amount >= 1:
             self.elements[int(ElementType.copper_nuggets)].is_available = True
         if self.elements[int(ElementType.sand)].element_resource_amount >= 1:
             self.elements[int(ElementType.golden_nuggets)].is_available = True
