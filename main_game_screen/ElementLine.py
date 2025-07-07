@@ -117,7 +117,7 @@ class ElementLine(pygame.sprite.Group):
         return (non_preservative_scaled_rect_size[1] * original_ratio_of_width_to_height, non_preservative_scaled_rect_size[1])
         
     
-    def resize_elements(self, change_in_width: float, change_in_height: float,ratio_of_change_in_size: float):
+    def resize_elements(self, change_in_width: float, change_in_height: float):
         original_ratio_of_width_to_height = float(self._element_image_rect_float_size[0]) / float(self._element_image_rect_float_size[1])
         original_ratio_of_height_to_width = float(self._element_image_rect_float_size[1]) / float(self._element_image_rect_float_size[0])
         
