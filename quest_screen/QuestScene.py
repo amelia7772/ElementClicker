@@ -36,15 +36,15 @@ class QuestScene:
         if quest_line.position_offset[0] != self.movement_target_position[0] \
         or quest_line.position_offset[1] != self.movement_target_position[1]:
             if (self.movement_target_position[0] - quest_line.position_offset[0]) > 0:
-                movement_in_the_x_axis = max(-3, min(3, 3 * dt * 60.0 * float(self.movement_target_position[0] - quest_line.position_offset[0])))
+                movement_in_the_x_axis = max(5, min(20, 3 * dt * 60.0 * float(self.movement_target_position[0] - quest_line.position_offset[0])))
             elif (self.movement_target_position[0] - quest_line.position_offset[0]) < 0:
-                movement_in_the_x_axis = -max(-3, min(3, 3 * dt * 60.0 * abs(float(self.movement_target_position[0] - quest_line.position_offset[0]))))
+                movement_in_the_x_axis = -max(5, min(20, 3 * dt * 60.0 * abs(float(self.movement_target_position[0] - quest_line.position_offset[0]))))
             else:
                 movement_in_the_x_axis = 0.0
             if (self.movement_target_position[1] - quest_line.position_offset[1]) > 0:
-                movement_in_the_y_axis = max(-3, min(3, 3 * dt * 60.0 * float(self.movement_target_position[1] - quest_line.position_offset[1])))
+                movement_in_the_y_axis = max(5, min(20, 3 * dt * 60.0 * float(self.movement_target_position[1] - quest_line.position_offset[1])))
             elif (self.movement_target_position[1] - quest_line.position_offset[1]) < 0:
-                movement_in_the_y_axis = -max(-3, min(3, 3 * dt * 60.0 * abs(float(self.movement_target_position[1] - quest_line.position_offset[1]))))
+                movement_in_the_y_axis = -max(5, min(20, 3 * dt * 60.0 * abs(float(self.movement_target_position[1] - quest_line.position_offset[1]))))
             else:
                 movement_in_the_y_axis = 0.0
                 
@@ -79,8 +79,8 @@ class QuestScene:
                 if self.is_mouse_dragging_on_the_background:
                     if (quest_line.position_offset[0] + (mouse_position[0] - self.previous_mouse_position[0])) <= 1200 \
                             and (quest_line.position_offset[1] + (mouse_position[1] - self.previous_mouse_position[1])) <= 1200:
-                                quest_line.set_position((quest_line.position_offset[0] + (mouse_position[0] - self.previous_mouse_position[0]), \
-                                quest_line.position_offset[1] + (mouse_position[1] - self.previous_mouse_position[1])))
+                                self.movement_target_position = (self.movement_target_position[0] + (mouse_position[0] - self.previous_mouse_position[0]), \
+                                self.movement_target_position[1] + (mouse_position[1] - self.previous_mouse_position[1]))
                     self.previous_mouse_position = (mouse_position[0], mouse_position[1])
                     
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
@@ -111,6 +111,7 @@ class QuestScene:
             elif event.type == pygame.MOUSEBUTTONUP:
                 if self.is_mouse_dragging_on_the_background:
                     self.is_mouse_dragging_on_the_background = False
+                    self.movement_target_position = (quest_line.position_offset[0], quest_line.position_offset[1])
                 
                 was_any_quest_ui_icon_pressed = False
                 if self.quest_button.is_ui_element_pressed():
