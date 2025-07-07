@@ -15,7 +15,7 @@ class ElementType(IntEnum):
     iron_pitchfork = 11,
     iron_sickle_scythe = 12,
     dirt = 13,
-    gravil = 14,
+    gravel = 14,
     sand = 15,
     farmland = 16,
     wheat_seeds = 17,
