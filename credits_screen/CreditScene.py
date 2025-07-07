@@ -31,6 +31,8 @@ class CreditsScene:
         
         self.is_mouse_wheel_moving = False
         
+        self.resize_ui_buttons()
+        
         self.redraw_scene()
         
         self.initial_bounding_box_height = float(self.how_to_play_title_rect.height + self.how_to_play_description_rect.height + self.credits_title_rect.height + self.credits_main_rect.height)
@@ -39,6 +41,12 @@ class CreditsScene:
         
         self.screen_size = Screen.screen.get_size()
         self.previous_size = self.screen_size
+    
+    def resize_ui_buttons(self):
+        self.quest_button.resize_ui_element(75.0 / float(self.quest_button.sizes[0][0]), 75.0 / float(self.quest_button.sizes[0][1]))
+        self.marketplace_button.resize_ui_element(75.0 / float(self.marketplace_button.sizes[0][0]), 75.0 / float(self.marketplace_button.sizes[0][1]))
+        self.setting_buttons.resize_ui_element(75.0 / float(self.setting_buttons.sizes[0][0]), 75.0 / float(self.setting_buttons.sizes[0][1]))
+        self.credits_buttons.resize_ui_element(75.0 / float(self.credits_buttons.sizes[0][0]), 75.0 / float(self.credits_buttons.sizes[0][1]))
     
     def update_scroll_offset(self, dt):
         if self.scroll_target_height != self.scroll_offset:
