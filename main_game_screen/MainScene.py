@@ -30,6 +30,8 @@ class MainScene:
         
         self.movement_change = pygame.Vector2(0.0, 0.0)
         
+        self.ratio_of_zooming = 1.0
+        
         self.active_scene = Scene.main
 
         reevaluate_recipes_waiting_time()
@@ -173,15 +175,14 @@ class MainScene:
                     
             elif event.type == pygame.MOUSEWHEEL:
                 zoom_speed = event.y * 0.1
-                for element in elements.elements:
-                    if event.y >= 0:
-                        if element._ratio_of_change_in_width <= 2 and element._ratio_of_change_in_height <= 2:
-                            element.resize_elements(1.0 + zoom_speed, 1.0 + zoom_speed, 1.0 + zoom_speed)
-                    else:
-                        if element._ratio_of_change_in_width >= 0.5 and element._ratio_of_change_in_height >= 0.5:
-                            element.resize_elements(1.0 + zoom_speed, 1.0 + zoom_speed, 1.0 + zoom_speed)
+                new_ratio_of_zooming = round(self.ratio_of_zooming + zoom_speed, 1)
+                if ((event.y > 0) and (new_ratio_of_zooming <= 2.0))\
+                    or ((event.y < 0) and (new_ratio_of_zooming >= 0.5)):
+                    for element in elements.elements:
+                        element.resize_elements(new_ratio_of_zooming / self.ratio_of_zooming, new_ratio_of_zooming / self.ratio_of_zooming)
+                    self.ratio_of_zooming = new_ratio_of_zooming
             
-        movement_speed = 6 * dt * 60
+        movement_speed = 12.0 * dt * 60.0 * self.ratio_of_zooming
         
         if pygame.key.get_pressed()[pygame.key.key_code("w")]:
             self.movement_change.y += 1 * movement_speed
@@ -238,10 +239,8 @@ class MainScene:
         return self.active_scene
     
     def resize_scene(self, new_size: tuple[int,int]):
-        ratio_of_change_in_size = max(new_size[0] / self.previous_size[0], new_size[1] / self.previous_size[1])
-                    
         for element in elements.elements:
-            element.resize_elements(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]),ratio_of_change_in_size)
+            element.resize_elements(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
                     
         xp_bar.resize_xp_elements(Screen.screen, float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
         
