@@ -27,6 +27,8 @@ class QuestScene:
         
         self.movement_target_position = (quest_line.position_offset[0], quest_line.position_offset[1])
         
+        self.movement_change = pygame.Vector2(0.0, 0.0)
+        
         self.screen_size = Screen.screen.get_size()
         self.previous_size = self.screen_size
         
@@ -146,18 +148,21 @@ class QuestScene:
         movement_speed = 6 * dt * 60
         
         if pygame.key.get_pressed()[pygame.key.key_code("w")]:
-            movement_target_y = min(1200, self.movement_target_position[1] + (1 * movement_speed))
-            self.movement_target_position = (self.movement_target_position[0], movement_target_y)
+            self.movement_change.y += 1 * movement_speed
         if pygame.key.get_pressed()[pygame.key.key_code("s")]:
-            movement_target_y = max(-1200, self.movement_target_position[1] - (1 * movement_speed))
-            self.movement_target_position = (self.movement_target_position[0], movement_target_y)
+            self.movement_change.y -= 1 * movement_speed
         if pygame.key.get_pressed()[pygame.key.key_code("a")]:
-            movement_target_x = min(1200, self.movement_target_position[0] + (1 * movement_speed))
-            self.movement_target_position = (movement_target_x, self.movement_target_position[1])
+            self.movement_change.x += 1 * movement_speed
         if pygame.key.get_pressed()[pygame.key.key_code("d")]:
-            movement_target_x = max(-1200, self.movement_target_position[0] - (1 * movement_speed))
-            self.movement_target_position = (movement_target_x, self.movement_target_position[1])
+            self.movement_change.x -= 1 * movement_speed
         
+        if not (self.movement_change.x == 0.0 and self.movement_change.y == 0.0):
+            self.movement_change.normalize()
+        
+            self.movement_target_position = (max(-1200, min(1200, self.movement_target_position[0] + int(self.movement_change.x))), max(-1200, min(1200, self.movement_target_position[1] + int(self.movement_change.y))))
+        
+            self.movement_change.x = 0.0
+            self.movement_change.y = 0.0
         Screen.screen.fill((46, 46, 46))
         
         self.update_movement(dt)
