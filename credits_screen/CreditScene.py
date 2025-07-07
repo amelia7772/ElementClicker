@@ -41,20 +41,21 @@ class CreditsScene:
         self.previous_size = self.screen_size
     
     def update_scroll_offset(self, dt):
-        self.scroll_acceleration = (30.0 * (float(Screen.screen.get_height()) / 400.0)) * ((self.scroll_initial_offset + ((self.scroll_target_height - self.scroll_initial_offset) / 2.0)) - self.scroll_offset)
-        
-        next_scroll_offset = self.scroll_offset + ((0.5 * self.scroll_acceleration * (dt * dt)) + (self.scroll_speed * dt))
-        
-        if (((self.scroll_target_height - self.scroll_initial_offset) > 0 and (next_scroll_offset <= self.scroll_target_height))\
-            or ((self.scroll_target_height - self.scroll_initial_offset) < 0 and (next_scroll_offset >= self.scroll_target_height))):
-        
-            self.scroll_offset = next_scroll_offset
-        
-            self.scroll_speed += self.scroll_acceleration * dt
-        elif (not pygame.key.get_pressed()[pygame.key.key_code("w")]) and (not pygame.key.get_pressed()[pygame.key.key_code("s")]):
-            self.scroll_speed = 0.0
-            self.scroll_offset = self.scroll_target_height
-            self.scroll_initial_offset = self.scroll_offset
+        if self.scroll_target_height != self.scroll_offset:
+            self.scroll_acceleration = (30.0 * (float(Screen.screen.get_height()) / 400.0)) * ((self.scroll_initial_offset + ((self.scroll_target_height - self.scroll_initial_offset) / 2.0)) - self.scroll_offset)
+            
+            next_scroll_offset = self.scroll_offset + ((0.5 * self.scroll_acceleration * (dt * dt)) + (self.scroll_speed * dt))
+            
+            if (((self.scroll_target_height - self.scroll_initial_offset) > 0 and (next_scroll_offset <= self.scroll_target_height))\
+                or ((self.scroll_target_height - self.scroll_initial_offset) < 0 and (next_scroll_offset >= self.scroll_target_height))):
+            
+                self.scroll_offset = next_scroll_offset
+            
+                self.scroll_speed += self.scroll_acceleration * dt
+            elif (not pygame.key.get_pressed()[pygame.key.key_code("w")]) and (not pygame.key.get_pressed()[pygame.key.key_code("s")]):
+                self.scroll_speed = 0.0
+                self.scroll_offset = self.scroll_target_height
+                self.scroll_initial_offset = self.scroll_offset
     
     def update(self, dt, events):
         Screen.screen.fill((46, 46, 46))
