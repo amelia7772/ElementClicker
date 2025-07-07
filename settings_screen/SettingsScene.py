@@ -16,11 +16,19 @@ class SettingsScene:
         self.setting_buttons = SettingsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"settings button icon.png")).convert_alpha())
         self.credits_buttons = CreditsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"credits button icon.png")).convert_alpha())
         
+        self.resize_ui_buttons()
+        
         self.active_scene = Scene.main
         
         self.screen_size = Screen.screen.get_size()
         self.previous_size = self.screen_size
-        
+    
+    def resize_ui_buttons(self):
+        self.quest_button.resize_ui_element(75.0 / float(self.quest_button.sizes[0][0]), 75.0 / float(self.quest_button.sizes[0][1]))
+        self.marketplace_button.resize_ui_element(75.0 / float(self.marketplace_button.sizes[0][0]), 75.0 / float(self.marketplace_button.sizes[0][1]))
+        self.setting_buttons.resize_ui_element(75.0 / float(self.setting_buttons.sizes[0][0]), 75.0 / float(self.setting_buttons.sizes[0][1]))
+        self.credits_buttons.resize_ui_element(75.0 / float(self.credits_buttons.sizes[0][0]), 75.0 / float(self.credits_buttons.sizes[0][1]))
+    
     def update(self, dt, events):
         Screen.screen.fill((46, 46, 46))
         
