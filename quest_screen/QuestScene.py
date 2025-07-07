@@ -21,36 +21,62 @@ class QuestScene:
         self.setting_buttons = SettingsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"settings button icon.png")).convert_alpha())
         self.credits_buttons = CreditsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"credits button icon.png")).convert_alpha())
         
+        self.is_mouse_dragging_on_the_background = False
+
+        self.previous_mouse_position = (0, 0)
+        
         self.screen_size = Screen.screen.get_size()
         self.previous_size = self.screen_size
         
         self.active_scene = Scene.main
     
     def update(self, dt, events):
+        mouse_position = pygame.mouse.get_pos()
         for event in events:
             if event.type == pygame.MOUSEMOTION:
-                mouse_position = pygame.mouse.get_pos()
                 self.quest_button.is_highlighted = self.quest_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                 self.marketplace_button.is_highlighted = self.marketplace_button._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                 self.setting_buttons.is_highlighted = self.setting_buttons._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                 self.credits_buttons.is_highlighted = self.credits_buttons._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                 for quest in quests:
                     quest.quest_ui_icon.is_highlighted = quest.quest_ui_icon._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
+                
+                if self.is_mouse_dragging_on_the_background:
+                    if (quest_line.position_offset[0] + (mouse_position[0] - self.previous_mouse_position[0])) <= 1200 \
+                            and (quest_line.position_offset[1] + (mouse_position[1] - self.previous_mouse_position[1])) <= 1200:
+                                quest_line.set_position((quest_line.position_offset[0] + (mouse_position[0] - self.previous_mouse_position[0]), \
+                                quest_line.position_offset[1] + (mouse_position[1] - self.previous_mouse_position[1])))
+                    self.previous_mouse_position = (mouse_position[0], mouse_position[1])
                     
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
+                is_any_ui_element_pressed = False
                 if self.quest_button.is_highlighted and not self.quest_button.is_ui_element_pressed():
                     self.quest_button.set_ui_element_is_pressed(True)
+                    is_any_ui_element_pressed = True
                 if self.marketplace_button.is_highlighted and not self.marketplace_button.is_ui_element_pressed():
                     self.marketplace_button.set_ui_element_is_pressed(True)
+                    is_any_ui_element_pressed = True
                 if self.setting_buttons.is_highlighted and not self.setting_buttons.is_ui_element_pressed():
                     self.setting_buttons.set_ui_element_is_pressed(True)
+                    is_any_ui_element_pressed = True
                 if self.credits_buttons.is_highlighted and not self.credits_buttons.is_ui_element_pressed():
                     self.credits_buttons.set_ui_element_is_pressed(True)
+                    is_any_ui_element_pressed = True
                 for quest in quests:
                     if quest.quest_ui_icon.is_highlighted and not quest.quest_ui_icon.is_ui_element_pressed():
                         quest.quest_ui_icon.set_ui_element_is_pressed(True)
+                        is_any_ui_element_pressed = True
+                
+                if not is_any_ui_element_pressed:
+                    self.previous_mouse_position = (mouse_position[0], mouse_position[1])
+                    self.is_mouse_dragging_on_the_background = True
+                else:
+                    self.is_mouse_dragging_on_the_background = False
             
             elif event.type == pygame.MOUSEBUTTONUP:
+                if self.is_mouse_dragging_on_the_background:
+                    self.is_mouse_dragging_on_the_background = False
+                
                 was_any_quest_ui_icon_pressed = False
                 if self.quest_button.is_ui_element_pressed():
                     self.quest_button.set_ui_element_is_pressed(False)
