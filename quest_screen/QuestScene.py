@@ -29,6 +29,8 @@ class QuestScene:
         
         self.movement_change = pygame.Vector2(0.0, 0.0)
         
+        self.ratio_of_zooming = 1.0
+        
         self.screen_size = Screen.screen.get_size()
         self.previous_size = self.screen_size
         
@@ -79,10 +81,10 @@ class QuestScene:
                     quest.quest_ui_icon.is_highlighted = quest.quest_ui_icon._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                 
                 if self.is_mouse_dragging_on_the_background:
-                    if (quest_line.position_offset[0] + (mouse_position[0] - self.previous_mouse_position[0])) <= 1200 \
-                            and (quest_line.position_offset[1] + (mouse_position[1] - self.previous_mouse_position[1])) <= 1200:
-                                self.movement_target_position = (self.movement_target_position[0] + (mouse_position[0] - self.previous_mouse_position[0]), \
-                                self.movement_target_position[1] + (mouse_position[1] - self.previous_mouse_position[1]))
+                    if abs(self.movement_target_position[0] + (mouse_position[0] - self.previous_mouse_position[0])) <= (1200 * self.ratio_of_zooming) \
+                        and abs(self.movement_target_position[1] + (mouse_position[1] - self.previous_mouse_position[1])) <= (1200 * self.ratio_of_zooming):
+                            self.movement_target_position = (self.movement_target_position[0] + (mouse_position[0] - self.previous_mouse_position[0]), \
+                            self.movement_target_position[1] + (mouse_position[1] - self.previous_mouse_position[1]))
                     self.previous_mouse_position = (mouse_position[0], mouse_position[1])
                     
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
@@ -138,14 +140,13 @@ class QuestScene:
             
             elif event.type == pygame.MOUSEWHEEL:
                 zoom_speed = event.y * 0.1
-                if event.y >= 0:
-                    if quest_line._ratio_of_change_in_width <= 2 and quest_line._ratio_of_change_in_height <= 2:
-                        quest_line.resize_questline(1.0 + zoom_speed, 1.0 + zoom_speed)
-                else:
-                    if quest_line._ratio_of_change_in_width >= 0.5 and quest_line._ratio_of_change_in_height >= 0.5:
-                        quest_line.resize_questline(1.0 + zoom_speed, 1.0 + zoom_speed)
+                new_ratio_of_zooming = round(self.ratio_of_zooming + zoom_speed, 1)
+                if ((event.y > 0) and (new_ratio_of_zooming <= 2.0))\
+                or ((event.y < 0) and (new_ratio_of_zooming >= 0.5)):
+                    quest_line.resize_questline(new_ratio_of_zooming / self.ratio_of_zooming, new_ratio_of_zooming / self.ratio_of_zooming)
+                    self.ratio_of_zooming = new_ratio_of_zooming
         
-        movement_speed = 6 * dt * 60
+        movement_speed = 12.0 * dt * 60.0 * self.ratio_of_zooming
         
         if pygame.key.get_pressed()[pygame.key.key_code("w")]:
             self.movement_change.y += 1 * movement_speed
@@ -159,10 +160,12 @@ class QuestScene:
         if not (self.movement_change.x == 0.0 and self.movement_change.y == 0.0):
             self.movement_change.normalize()
         
-            self.movement_target_position = (max(-1200, min(1200, self.movement_target_position[0] + int(self.movement_change.x))), max(-1200, min(1200, self.movement_target_position[1] + int(self.movement_change.y))))
+            self.movement_target_position = (max((-1200 * self.ratio_of_zooming), min((1200.0 * self.ratio_of_zooming), self.movement_target_position[0] + int(self.movement_change.x))),\
+                max((-1200 * self.ratio_of_zooming), min((1200.0 * self.ratio_of_zooming), self.movement_target_position[1] + int(self.movement_change.y))))
         
             self.movement_change.x = 0.0
             self.movement_change.y = 0.0
+        
         Screen.screen.fill((46, 46, 46))
         
         self.update_movement(dt)
@@ -198,7 +201,11 @@ class QuestScene:
         self.setting_buttons.resize_ui_element(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
         self.credits_buttons.resize_ui_element(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
 
-        quest_line.resize_questline(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
+        new_ratio_of_zoom = max(0.5, min(2.0, self.ratio_of_zooming * (float(new_size[0]) / float(self.previous_size[0]))))
+        
+        quest_line.resize_questline(new_ratio_of_zoom / self.ratio_of_zooming, new_ratio_of_zoom / self.ratio_of_zooming)
+        
+        self.ratio_of_zooming = new_ratio_of_zoom
                     
         self.movement_target_position = (quest_line.position_offset[0], quest_line.position_offset[1])
         
