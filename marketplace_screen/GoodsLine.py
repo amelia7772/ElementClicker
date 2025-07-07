@@ -46,13 +46,15 @@ class GoodsLine:
         self.element_id = goods[goods_id][0]
         self.price_buy = goods[goods_id][1]
         self.price_sell = goods[goods_id][2]
+        self.element_amounts_requirements_for_availability = goods[goods_id][5]
+        self.level_requirement_for_availability = goods[goods_id][4]
         if len(goods[goods_id][5]) == 0:
             self.requirement_function = lambda level, _elements: True
         else:
             def _requirement_function(_level: int, _elements):
                 is_requirement_of_element_amount_met = True
                 for _element in goods[goods_id][5]:
-                    if _elements[_element[0]].element_resource_amount < _element[1]:
+                    if _elements[int(_element[0])].element_resource_amount < _element[1]:
                         is_requirement_of_element_amount_met = False
                         break
                 return is_requirement_of_element_amount_met and (_level >= goods[goods_id][4])
@@ -112,7 +114,7 @@ class GoodsLine:
         new_availability = self.requirement_function(xp_bar.level, elements.elements)
         if (goods[self.goods_id][3] == False) and (new_availability == True):
             self.is_available = new_availability
-            goods[self.goods_id] = (goods[self.goods_id][0], goods[self.goods_id][1], goods[self.goods_id][2], True, goods[self.goods_id][4])
+            goods[self.goods_id] = (goods[self.goods_id][0], goods[self.goods_id][1], goods[self.goods_id][2], True, goods[self.goods_id][4], goods[self.goods_id][5])
             self.resize_ui_elements()
     
     def redraw_element_transaction_amount_text_surface(self):
@@ -234,6 +236,43 @@ class GoodsLine:
         self.element_name_text = UiElement([element_name_text_surface], [(float(element_name_text_surface.get_width()), float(element_name_text_surface.get_height()))])
         self.element_name_text.resize_ui_element((0.2 * float(self.bounding_box.width)) / float(element_name_text_surface.get_width()), (float(self.bounding_box.height) / 2.0) / float(element_name_text_surface.get_height()))
         
+        element_name_text_unavailable_surface = self.pixelated_font.render('?' * len(elements.elements[int(self.element_id)].element_explanation_message.element_name), False, pygame.Color(255,255,255))
+        
+        self.element_name_unavailable_text = UiElement([element_name_text_unavailable_surface], [(float(element_name_text_unavailable_surface.get_width()), float(element_name_text_unavailable_surface.get_height()))])
+        self.element_name_unavailable_text.resize_ui_element((0.2 * float(self.bounding_box.width)) / float(element_name_text_unavailable_surface.get_width()), (float(self.bounding_box.height) / 2.0) / float(element_name_text_unavailable_surface.get_height()))
+        
+        self.availability_requirements_bounding_box = pygame.Rect(0.0, 0.0, float(self.bounding_box.width) - float(self.element_icon.sizes[0][0]),float(self.bounding_box.height) - float(self.element_name_text.sizes[0][1]))
+        
+        self.availability_requirements_ui_icons: list[UiElement] = []
+        
+        requirements_text_surface = self.pixelated_font.render("To unlock:", False, pygame.Color(255,255,255))
+        self.availability_requirements_ui_icons.append(UiElement([requirements_text_surface], [(float(requirements_text_surface.get_width()), float(requirements_text_surface.get_height()))]))
+        
+        number_of_lines_of_requirements_texts = len(self.element_amounts_requirements_for_availability) + 2
+        self.availability_requirements_ui_icons[0].resize_ui_element(float(self.availability_requirements_bounding_box.width) / float(self.availability_requirements_ui_icons[0].sizes[0][0]), (float(self.availability_requirements_bounding_box.height) / float(number_of_lines_of_requirements_texts)) / float(self.availability_requirements_ui_icons[0].sizes[0][1]))
+        
+        if xp_bar.level >= self.level_requirement_for_availability:
+            color_of_level_requirements_text = pygame.Color(0,255,54)
+        else:
+            color_of_level_requirements_text = pygame.Color(255,54,0)
+        level_requirements_text_surface = self.pixelated_font.render(f'Level: {self.level_requirement_for_availability}', False, color_of_level_requirements_text)
+        
+        self.availability_requirements_ui_icons.append(UiElement([level_requirements_text_surface], [(float(level_requirements_text_surface.get_width()), float(level_requirements_text_surface.get_height()))]))
+        self.availability_requirements_ui_icons[1].resize_ui_element(float(self.availability_requirements_bounding_box.width) / float(self.availability_requirements_ui_icons[1].sizes[0][0]), (float(self.availability_requirements_bounding_box.height) / float(number_of_lines_of_requirements_texts)) / float(self.availability_requirements_ui_icons[1].sizes[0][1]))
+        
+        counter = 2
+        for element_amount_requirement in self.element_amounts_requirements_for_availability:
+            
+            if elements.elements[int(element_amount_requirement[0])].element_resource_amount >= element_amount_requirement[1]:
+                color_of_element_amount_requirement = pygame.Color(0,255,54)
+            else:
+                color_of_element_amount_requirement = pygame.Color(255,54,0)
+            element_amount_requirement_surface = self.pixelated_font.render(f'{elements.elements[int(element_amount_requirement[0])].element_explanation_message.element_name}: {element_amount_requirement[1]}', False, color_of_element_amount_requirement)
+            self.availability_requirements_ui_icons.append(UiElement([element_amount_requirement_surface], [(float(element_amount_requirement_surface.get_width()), float(element_amount_requirement_surface.get_height()))]))
+            self.availability_requirements_ui_icons[counter].resize_ui_element(float(self.availability_requirements_bounding_box.width) / float(self.availability_requirements_ui_icons[counter].sizes[0][0]), (float(self.availability_requirements_bounding_box.height) / float(number_of_lines_of_requirements_texts)) / float(self.availability_requirements_ui_icons[counter].sizes[0][1]))
+        
+            counter += 1
+                   
         element_transaction_amount_text_surface = self.pixelated_font.render(f'({self.element_transaction_amount})', False, pygame.Color(255,255,255))
         
         self.element_transaction_amount_text  = UiElement([element_transaction_amount_text_surface], [(float(element_transaction_amount_text_surface.get_width()), float(element_transaction_amount_text_surface.get_height()))])
@@ -329,7 +368,19 @@ class GoodsLine:
         
         self.transaction_button_rect.right = self.bounding_box.right
         self.transaction_button_rect.centery = self.bounding_box.centery
-    
+        
+        self.availability_requirements_bounding_box.top = self.element_name_text_rect.bottom
+        self.availability_requirements_bounding_box.left = self.element_name_text_rect.left
+        
+        self.availability_requirements_rects: list[pygame.Rect] = []
+        
+        self.availability_requirements_rects.append(pygame.Rect(0.0, 0.0, float(self.availability_requirements_ui_icons[0].sizes[0][0]), float(self.availability_requirements_ui_icons[0].sizes[0][1])))
+        self.availability_requirements_rects[0].topleft = self.availability_requirements_bounding_box.topleft
+        
+        for counter in range(1, len(self.availability_requirements_ui_icons)):
+            self.availability_requirements_rects.append(pygame.Rect(0.0, 0.0, float(self.availability_requirements_ui_icons[counter].sizes[0][0]), float(self.availability_requirements_ui_icons[counter].sizes[0][1])))
+            self.availability_requirements_rects[counter].topleft = self.availability_requirements_rects[counter - 1].bottomleft
+        
     def recheck_price_color(self):
         if self.is_transaction_sell:
             self.is_transaction_viable = (elements.elements[int(self.element_id)].element_resource_amount >= self.element_transaction_amount)
@@ -350,15 +401,11 @@ class GoodsLine:
         element_icon_rect = self.element_icon_rect.copy()
         element_icon_rect.top += scroll_offset
         
-        if rect.colliderect(element_icon_rect):
-            if self.is_available:
-                self.element_icon.draw(surface, [element_icon_rect.topleft, element_icon_image_rect.topleft])
-            else:
-                self.element_icon_unavailable.draw(surface, [element_icon_rect.topleft, element_icon_image_rect.topleft])
+        element_name_text_rect = self.element_name_text_rect.copy()
+        element_name_text_rect.top += scroll_offset
+
         
         if self.is_available:
-            element_name_text_rect = self.element_name_text_rect.copy()
-            element_name_text_rect.top += scroll_offset
             
             element_transaction_amount_text_rect = self.element_transaction_amount_text_rect.copy()
             element_transaction_amount_text_rect.top += scroll_offset
@@ -378,6 +425,8 @@ class GoodsLine:
             transaction_button_rect = self.transaction_button_rect.copy()
             transaction_button_rect.top += scroll_offset
             
+            if rect.colliderect(element_icon_rect):
+                self.element_icon.draw(surface, [element_icon_rect.topleft, element_icon_image_rect.topleft])
             if rect.colliderect(element_name_text_rect):
                 self.element_name_text.draw(surface, [element_name_text_rect.topleft])
             if rect.colliderect(element_transaction_amount_text_rect):
@@ -392,7 +441,19 @@ class GoodsLine:
                 self.element_amount_number_text.draw(surface, [element_amount_number_text_rect.topleft])
             if rect.colliderect(transaction_button_rect):
                 self.transaction_button.draw(surface, [transaction_button_rect.topleft])
-        
+        else:
+            if rect.colliderect(element_icon_rect):
+                self.element_icon_unavailable.draw(surface, [element_icon_rect.topleft, element_icon_image_rect.topleft])
+            if rect.colliderect(element_name_text_rect):
+                self.element_name_unavailable_text.draw(surface, [element_name_text_rect.topleft])
+            counter = 0
+            for availability_requirements_rect in self.availability_requirements_rects:
+                availability_requirements_rect_modified_for_scroll = availability_requirements_rect.copy()
+                availability_requirements_rect_modified_for_scroll.top += scroll_offset
+                if rect.colliderect(availability_requirements_rect_modified_for_scroll):
+                    self.availability_requirements_ui_icons[counter].draw(surface, [availability_requirements_rect_modified_for_scroll.topleft])
+                counter += 1
+            
     def __calculate_order_of_magnitude__(self, number: int):
         order_of_magnitude = 0
         while number > 0:
