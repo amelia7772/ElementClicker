@@ -12,7 +12,7 @@ import time
 def reevaluate_recipes_waiting_time():
     crafting_table[int(ElementType.rock)].waiting_time = crafting_table[int(ElementType.rock)].original_waiting_time
     crafting_table[int(ElementType.water)].waiting_time = crafting_table[int(ElementType.water)].original_waiting_time
-    crafting_table[int(ElementType.gravil)].waiting_time = crafting_table[int(ElementType.gravil)].original_waiting_time
+    crafting_table[int(ElementType.gravel)].waiting_time = crafting_table[int(ElementType.gravel)].original_waiting_time
     crafting_table[int(ElementType.sand)].waiting_time = crafting_table[int(ElementType.sand)].original_waiting_time
     crafting_table[int(ElementType.dirt)].waiting_time = crafting_table[int(ElementType.dirt)].original_waiting_time
     
@@ -33,7 +33,7 @@ def reevaluate_recipes_waiting_time():
     
     amount_of_iron_hammer = Elements.elements.elements[int(ElementType.iron_hammer)].element_resource_amount - 1
     while amount_of_iron_hammer > 0:
-        crafting_table[int(ElementType.gravil)].waiting_time -= crafting_table[int(ElementType.gravil)].original_waiting_time * (5/100)
+        crafting_table[int(ElementType.gravel)].waiting_time -= crafting_table[int(ElementType.gravel)].original_waiting_time * (5/100)
         amount_of_iron_hammer -= 1
     
     amount_of_iron_hammer = Elements.elements.elements[int(ElementType.iron_hammer)].element_resource_amount - 5
