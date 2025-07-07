@@ -182,7 +182,7 @@ class MainScene:
                         element.resize_elements(new_ratio_of_zooming / self.ratio_of_zooming, new_ratio_of_zooming / self.ratio_of_zooming)
                     self.ratio_of_zooming = new_ratio_of_zooming
             
-        movement_speed = 6.0 * dt * 60.0 * self.ratio_of_zooming
+        movement_speed = 9.0 * dt * 60.0 * self.ratio_of_zooming
         
         if pygame.key.get_pressed()[pygame.key.key_code("w")]:
             self.movement_change.y += 1 * movement_speed
