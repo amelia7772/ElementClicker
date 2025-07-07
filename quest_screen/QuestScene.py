@@ -22,13 +22,48 @@ class QuestScene:
         self.credits_buttons = CreditsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"credits button icon.png")).convert_alpha())
         
         self.is_mouse_dragging_on_the_background = False
-
+        
         self.previous_mouse_position = (0, 0)
+        
+        self.movement_target_position = (quest_line.position_offset[0], quest_line.position_offset[1])
         
         self.screen_size = Screen.screen.get_size()
         self.previous_size = self.screen_size
         
         self.active_scene = Scene.main
+    
+    def update_movement(self, dt):
+        if quest_line.position_offset[0] != self.movement_target_position[0] \
+        or quest_line.position_offset[1] != self.movement_target_position[1]:
+            if (self.movement_target_position[0] - quest_line.position_offset[0]) > 0:
+                movement_in_the_x_axis = max(-3, min(3, 3 * dt * 60.0 * float(self.movement_target_position[0] - quest_line.position_offset[0])))
+            elif (self.movement_target_position[0] - quest_line.position_offset[0]) < 0:
+                movement_in_the_x_axis = -max(-3, min(3, 3 * dt * 60.0 * abs(float(self.movement_target_position[0] - quest_line.position_offset[0]))))
+            else:
+                movement_in_the_x_axis = 0.0
+            if (self.movement_target_position[1] - quest_line.position_offset[1]) > 0:
+                movement_in_the_y_axis = max(-3, min(3, 3 * dt * 60.0 * float(self.movement_target_position[1] - quest_line.position_offset[1])))
+            elif (self.movement_target_position[1] - quest_line.position_offset[1]) < 0:
+                movement_in_the_y_axis = -max(-3, min(3, 3 * dt * 60.0 * abs(float(self.movement_target_position[1] - quest_line.position_offset[1]))))
+            else:
+                movement_in_the_y_axis = 0.0
+                
+            if quest_line.position_offset[0] > self.movement_target_position[0]:
+                if (quest_line.position_offset[0] + movement_in_the_x_axis) < self.movement_target_position[0]:
+                    movement_in_the_x_axis = float(self.movement_target_position[0] - quest_line.position_offset[0])
+            else:
+                if (quest_line.position_offset[0] + movement_in_the_x_axis) > self.movement_target_position[0]:
+                    movement_in_the_x_axis = float(self.movement_target_position[0] - quest_line.position_offset[0])
+            
+            if quest_line.position_offset[1] > self.movement_target_position[1]:
+                if (quest_line.position_offset[1] + movement_in_the_y_axis) < self.movement_target_position[1]:
+                    movement_in_the_y_axis = float(self.movement_target_position[1] - quest_line.position_offset[1])
+            else:
+                if (quest_line.position_offset[1] + movement_in_the_y_axis) > self.movement_target_position[1]:
+                    movement_in_the_y_axis = float(self.movement_target_position[1] - quest_line.position_offset[1])
+                
+            movement_vector = (movement_in_the_x_axis, movement_in_the_y_axis)
+            quest_line.set_position((int(quest_line.position_offset[0] + movement_vector[0]), int(quest_line.position_offset[1] + movement_vector[1])))
     
     def update(self, dt, events):
         mouse_position = pygame.mouse.get_pos()
@@ -110,19 +145,21 @@ class QuestScene:
         movement_speed = 6 * dt * 60
         
         if pygame.key.get_pressed()[pygame.key.key_code("w")]:
-            if quest_line.position_offset[1] + (1 * movement_speed) <= 1200:
-                quest_line.set_position((quest_line.position_offset[0], quest_line.position_offset[1] + (1.0 * movement_speed)))
+            movement_target_y = min(1200, self.movement_target_position[1] + (1 * movement_speed))
+            self.movement_target_position = (self.movement_target_position[0], movement_target_y)
         if pygame.key.get_pressed()[pygame.key.key_code("s")]:
-            if quest_line.position_offset[1] + (-1 * movement_speed) <= 1200:
-                quest_line.set_position((quest_line.position_offset[0], quest_line.position_offset[1] - (1.0 * movement_speed)))
+            movement_target_y = max(-1200, self.movement_target_position[1] - (1 * movement_speed))
+            self.movement_target_position = (self.movement_target_position[0], movement_target_y)
         if pygame.key.get_pressed()[pygame.key.key_code("a")]:
-            if quest_line.position_offset[0] + (1 * movement_speed)<= 1200:
-                quest_line.set_position((quest_line.position_offset[0] + (1.0 * movement_speed), quest_line.position_offset[1]))
+            movement_target_x = min(1200, self.movement_target_position[0] + (1 * movement_speed))
+            self.movement_target_position = (movement_target_x, self.movement_target_position[1])
         if pygame.key.get_pressed()[pygame.key.key_code("d")]:
-            if quest_line.position_offset[0] + (-1 * movement_speed) <= 1200:
-                quest_line.set_position((quest_line.position_offset[0] + (-1.0 * movement_speed), quest_line.position_offset[1]))
+            movement_target_x = max(-1200, self.movement_target_position[0] - (1 * movement_speed))
+            self.movement_target_position = (movement_target_x, self.movement_target_position[1])
         
         Screen.screen.fill((46, 46, 46))
+        
+        self.update_movement(dt)
         
         for x in range(0, Screen.screen.get_width(), self.background_image.get_width()):
             for y in range(0, Screen.screen.get_height(), self.background_image.get_height()):
@@ -157,4 +194,6 @@ class QuestScene:
 
         quest_line.resize_questline(float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
                     
+        self.movement_target_position = (quest_line.position_offset[0], quest_line.position_offset[1])
+        
         self.screen_size = Screen.screen.get_size()
