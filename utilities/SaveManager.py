@@ -4,6 +4,8 @@ from xpbar.XpBar import *
 from main_game_screen.Elements import *
 from quest_screen.QuestLine import *
 from marketplace_screen import Money
+from marketplace_screen.Goods import goods
+
 class SaveManager:
     def __init__(self):
         pass
@@ -18,6 +20,8 @@ class SaveManager:
             buffer += struct.pack('<1b', element.is_available)
         for quest in quests:
             buffer += struct.pack('<1b', quest.is_completed)
+        for product in goods:
+            buffer += struct.pack('<1b', product[3])
         buffer += struct.pack('<d', Money.money)
         if save_file.writable():
             save_file.write(buffer)
@@ -27,8 +31,8 @@ class SaveManager:
         try:
             save_file = open("save.bin", 'rb')
             if save_file.readable():
-                buffer = save_file.read(((len(elements.elements) + 2) * 4) + len(elements.elements) + len(quests) + 8)
-                resources = struct.unpack(f'<{len(elements.elements) + 2}i{len(elements.elements) + len(quests)}bd', buffer)
+                buffer = save_file.read(((len(elements.elements) + 2) * 4) + len(elements.elements) + len(quests) + len(goods) + 8)
+                resources = struct.unpack(f'<{len(elements.elements) + 2}i{len(elements.elements) + len(quests) + len(goods)}bd', buffer)
                 counter = 0
                 for element in elements.elements:
                     element.increase_element_amount(resources[counter], screen)
@@ -43,7 +47,10 @@ class SaveManager:
                 for quest in quests:
                     quest_line.set_quest_completed(quest.id, resources[counter])
                     counter += 1
-            Money.money = resources[counter]
+                for j in range(0, len(goods)):
+                    goods[j] = (goods[j][0], goods[j][1], goods[j][2], resources[counter], goods[j][4], goods[j][5])
+                    counter += 1
+                Money.money = resources[counter]
             save_file.close()
         except FileExistsError:
             print("FileExistsError")
