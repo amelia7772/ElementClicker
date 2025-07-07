@@ -178,7 +178,7 @@ class MarketplaceScene:
             self.scroll_offset = next_scroll_offset
         
             self.scroll_speed += self.scroll_acceleration * dt
-        elif (not self.is_mouse_wheel_moving) and (not pygame.key.get_pressed()[pygame.key.key_code("w")]) and (not pygame.key.get_pressed()[pygame.key.key_code("s")]):
+        elif (not pygame.key.get_pressed()[pygame.key.key_code("w")]) and (not pygame.key.get_pressed()[pygame.key.key_code("s")]):
             self.scroll_speed = 0.0
             self.scroll_offset = self.scroll_target_height
             self.scroll_initial_offset = self.scroll_offset
