@@ -31,6 +31,8 @@ class QuestScene:
         
         self.ratio_of_zooming = 1.0
         
+        self.resize_ui_buttons()
+        
         self.screen_size = Screen.screen.get_size()
         self.previous_size = self.screen_size
         
@@ -68,6 +70,12 @@ class QuestScene:
                 
             movement_vector = (movement_in_the_x_axis, movement_in_the_y_axis)
             quest_line.set_position((int(quest_line.position_offset[0] + movement_vector[0]), int(quest_line.position_offset[1] + movement_vector[1])))
+    
+    def resize_ui_buttons(self):
+        self.quest_button.resize_ui_element(75.0 / float(self.quest_button.sizes[0][0]), 75.0 / float(self.quest_button.sizes[0][1]))
+        self.marketplace_button.resize_ui_element(75.0 / float(self.marketplace_button.sizes[0][0]), 75.0 / float(self.marketplace_button.sizes[0][1]))
+        self.setting_buttons.resize_ui_element(75.0 / float(self.setting_buttons.sizes[0][0]), 75.0 / float(self.setting_buttons.sizes[0][1]))
+        self.credits_buttons.resize_ui_element(75.0 / float(self.credits_buttons.sizes[0][0]), 75.0 / float(self.credits_buttons.sizes[0][1]))
     
     def update(self, dt, events):
         mouse_position = pygame.mouse.get_pos()
