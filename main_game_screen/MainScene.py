@@ -49,15 +49,15 @@ class MainScene:
         if self.current_movement_position[0] != self.movement_target_position[0] \
         or self.current_movement_position[1] != self.movement_target_position[1]:
             if (self.movement_target_position[0] - self.current_movement_position[0]) > 0:
-                movement_in_the_x_axis = max(-3, min(3, 3 * dt * 60.0 * float(self.movement_target_position[0] - self.current_movement_position[0])))
+                movement_in_the_x_axis = max(5, min(20, 3 * dt * 60.0 * float(self.movement_target_position[0] - self.current_movement_position[0])))
             elif (self.movement_target_position[0] - self.current_movement_position[0]) < 0:
-                movement_in_the_x_axis = -max(-3, min(3, 3 * dt * 60.0 * abs(float(self.movement_target_position[0] - self.current_movement_position[0]))))
+                movement_in_the_x_axis = -max(5, min(20, 3 * dt * 60.0 * abs(float(self.movement_target_position[0] - self.current_movement_position[0]))))
             else:
                 movement_in_the_x_axis = 0.0
             if (self.movement_target_position[1] - self.current_movement_position[1]) > 0:
-                movement_in_the_y_axis = max(-3, min(3, 3 * dt * 60.0 * float(self.movement_target_position[1] - self.current_movement_position[1])))
+                movement_in_the_y_axis = max(5, min(20, 3 * dt * 60.0 * float(self.movement_target_position[1] - self.current_movement_position[1])))
             elif (self.movement_target_position[1] - self.current_movement_position[1]) < 0:
-                movement_in_the_y_axis = -max(-3, min(3, 3 * dt * 60.0 * abs(float(self.movement_target_position[1] - self.current_movement_position[1]))))
+                movement_in_the_y_axis = -max(5, min(20, 3 * dt * 60.0 * abs(float(self.movement_target_position[1] - self.current_movement_position[1]))))
             else:
                 movement_in_the_y_axis = 0.0
                 
@@ -92,12 +92,10 @@ class MainScene:
                 self.credits_buttons.is_highlighted = self.credits_buttons._hightliter_ellipse.collide_point(float(mouse_position[0]), float(mouse_position[1]))
                 
                 if self.is_mouse_dragging_on_the_background:
-                    for element in elements.elements:
-                        if (element.offset[0] + (mouse_position[0] - self.previous_mouse_position[0])) <= 1200 \
-                            and (element.offset[1] + (mouse_position[1] - self.previous_mouse_position[1])) <= 1200:
-                            element.reposition_elements_with_offset((\
-                                float(mouse_position[0] - self.previous_mouse_position[0]), \
-                                float(mouse_position[1] - self.previous_mouse_position[1])))
+                    if (self.current_movement_position[0] + (mouse_position[0] - self.previous_mouse_position[0])) <= 1200 \
+                        and (self.current_movement_position[1] + (mouse_position[1] - self.previous_mouse_position[1])) <= 1200:
+                            self.movement_target_position = (self.movement_target_position[0] + (mouse_position[0] - self.previous_mouse_position[0]), \
+                            self.movement_target_position[1] + (mouse_position[1] - self.previous_mouse_position[1]))
                     self.previous_mouse_position = (mouse_position[0], mouse_position[1])
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
                 is_any_ui_element_pressed = False
@@ -145,6 +143,8 @@ class MainScene:
             elif event.type == pygame.MOUSEBUTTONUP:
                 if self.is_mouse_dragging_on_the_background:
                     self.is_mouse_dragging_on_the_background = False
+                    self.movement_target_position = (self.current_movement_position[0], self.current_movement_position[1])
+                
                 counter = 0
                 for element in elements.elements:
                     if element.is_element_pressed() and crafting_timers[counter] == -1:
