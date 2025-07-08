@@ -11,6 +11,7 @@ from crafting.CraftingTable import get_recipe_for
 from math import floor
 from utilities.BigNumberMap import order_of_magnitude_to_symbol_map
 from marketplace_screen.Goods import goods
+from utilities.Events import *
 
 global transaction_button_buy_price_matched_unpressed_surface
 global transaction_button_buy_price_matched_hovered_over_surface
@@ -214,7 +215,8 @@ class GoodsLine:
             Money.money -= self.price_buy * self.element_transaction_amount
             elements.elements[int(self.element_id)].increase_element_amount(self.element_transaction_amount, Screen.screen)
             self.is_transaction_viable = (Money.money >= (self.price_buy * self.element_transaction_amount))
-        
+            game_events.append(Event.money_amount_decrease)
+            
         for k in range(0, len(elements.elements)):
             elements.elements[k]._is_element_craftable = is_craftable(get_recipe_for(ElementType(k)))
         
