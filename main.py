@@ -133,6 +133,9 @@ def evaluate_game_event(game_event: Event, marketplace_scene: MarketplaceScene):
     if game_event == Event.update_marketplace_goods_availability:
         for goods_line in marketplace_scene.goods_lines:
             goods_line.update_availability()
+    if game_event == Event.money_amount_decrease:
+        for goods_line in marketplace_scene.goods_lines:
+            goods_line.resize_ui_elements()
     return marketplace_scene
 
 is_loaded = True
