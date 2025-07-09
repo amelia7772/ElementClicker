@@ -20,6 +20,8 @@ class MainScene:
         self.setting_buttons = SettingsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"settings button icon.png")).convert_alpha())
         self.credits_buttons = CreditsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"credits button icon.png")).convert_alpha())
 
+        self.background_ui_icon = UiElement([self.background_image.copy()], [(float(self.background_image.get_width()), float(self.background_image.get_height()))])
+        
         self.resize_ui_buttons()
         
         self.is_mouse_dragging_on_the_background = False
@@ -208,6 +210,7 @@ class MainScene:
                     or ((event.y < 0) and (new_ratio_of_zooming >= 0.5)):
                     for element in elements.elements:
                         element.resize_elements(new_ratio_of_zooming / self.ratio_of_zooming, new_ratio_of_zooming / self.ratio_of_zooming)
+                    self.background_ui_icon.resize_ui_element(new_ratio_of_zooming / self.ratio_of_zooming, new_ratio_of_zooming / self.ratio_of_zooming)
                     self.ratio_of_zooming = new_ratio_of_zooming
         
         self.update_movement(dt)
@@ -216,9 +219,9 @@ class MainScene:
         
         Screen.screen.fill((46, 46, 46))
         
-        for x in range(0, Screen.screen.get_width(), self.background_image.get_width()):
-            for y in range(0, Screen.screen.get_height(), self.background_image.get_height()):
-                Screen.screen.blit(self.background_image, (x,y))
+        for x in range(-int(self.background_ui_icon.sizes[0][0]), Screen.screen.get_width() + int(self.background_ui_icon.sizes[0][0]), int(self.background_ui_icon.sizes[0][0])):
+            for y in range(-int(self.background_ui_icon.sizes[0][1]), Screen.screen.get_height() + int(self.background_ui_icon.sizes[0][1]), int(self.background_ui_icon.sizes[0][1])):
+                self.background_ui_icon.draw(Screen.screen, [(x + (self.current_movement_position[0] % int(self.background_ui_icon.sizes[0][0])),y + (self.current_movement_position[1] % int(self.background_ui_icon.sizes[0][1])))])
         
         elements.draw(Screen.screen)
         
@@ -252,6 +255,8 @@ class MainScene:
         
         for element in elements.elements:
             element.resize_elements(new_ratio_of_zoom / self.ratio_of_zooming, new_ratio_of_zoom / self.ratio_of_zooming)
+        
+        self.background_ui_icon.resize_ui_element(new_ratio_of_zoom / self.ratio_of_zooming, new_ratio_of_zoom / self.ratio_of_zooming)
         
         xp_bar.resize_xp_elements(Screen.screen, float(new_size[0]) / float(self.previous_size[0]), float(new_size[1]) / float(self.previous_size[1]))
         
