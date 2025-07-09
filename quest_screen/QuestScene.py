@@ -21,6 +21,8 @@ class QuestScene:
         self.setting_buttons = SettingsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"settings button icon.png")).convert_alpha())
         self.credits_buttons = CreditsButton(pygame.image.load(os.path.join("assets", "images" ,"quest button background.png")).convert_alpha(), pygame.image.load(os.path.join("assets", "images" ,"credits button icon.png")).convert_alpha())
         
+        self.background_ui_icon = UiElement([self.background_image.copy()], [(float(self.background_image.get_width()), float(self.background_image.get_height()))])
+        
         self.is_mouse_dragging_on_the_background = False
         
         self.previous_mouse_position = (0, 0)
@@ -172,35 +174,16 @@ class QuestScene:
                 if ((event.y > 0) and (new_ratio_of_zooming <= 2.0))\
                 or ((event.y < 0) and (new_ratio_of_zooming >= 0.5)):
                     quest_line.resize_questline(new_ratio_of_zooming / self.ratio_of_zooming, new_ratio_of_zooming / self.ratio_of_zooming)
+                    self.background_ui_icon.resize_ui_element(new_ratio_of_zooming / self.ratio_of_zooming, new_ratio_of_zooming / self.ratio_of_zooming)
                     self.ratio_of_zooming = new_ratio_of_zooming
-        
-        movement_speed = 9.0 * dt * 60.0 * self.ratio_of_zooming
-        
-        if pygame.key.get_pressed()[pygame.key.key_code("w")]:
-            self.movement_change.y += 1 * movement_speed
-        if pygame.key.get_pressed()[pygame.key.key_code("s")]:
-            self.movement_change.y -= 1 * movement_speed
-        if pygame.key.get_pressed()[pygame.key.key_code("a")]:
-            self.movement_change.x += 1 * movement_speed
-        if pygame.key.get_pressed()[pygame.key.key_code("d")]:
-            self.movement_change.x -= 1 * movement_speed
-        
-        if not (self.movement_change.x == 0.0 and self.movement_change.y == 0.0):
-            self.movement_change.normalize()
-        
-            self.movement_target_position = (max((-1200 * self.ratio_of_zooming), min((1200.0 * self.ratio_of_zooming), self.movement_target_position[0] + int(self.movement_change.x))),\
-                max((-1200 * self.ratio_of_zooming), min((1200.0 * self.ratio_of_zooming), self.movement_target_position[1] + int(self.movement_change.y))))
-        
-            self.movement_change.x = 0.0
-            self.movement_change.y = 0.0
-        
+                    
         Screen.screen.fill((46, 46, 46))
         
         self.update_movement(dt)
         
-        for x in range(0, Screen.screen.get_width(), self.background_image.get_width()):
-            for y in range(0, Screen.screen.get_height(), self.background_image.get_height()):
-                Screen.screen.blit(self.background_image, (x,y))
+        for x in range(-int(self.background_ui_icon.sizes[0][0]), Screen.screen.get_width() + int(self.background_ui_icon.sizes[0][0]), int(self.background_ui_icon.sizes[0][0])):
+            for y in range(-int(self.background_ui_icon.sizes[0][1]), Screen.screen.get_height() + int(self.background_ui_icon.sizes[0][1]), int(self.background_ui_icon.sizes[0][1])):
+                self.background_ui_icon.draw(Screen.screen, [(x + (quest_line.position_offset[0] % int(self.background_ui_icon.sizes[0][0])),y + (quest_line.position_offset[1] % int(self.background_ui_icon.sizes[0][1])))])
         
         quest_line.draw(Screen.screen)
         
@@ -232,7 +215,9 @@ class QuestScene:
         new_ratio_of_zoom = max(0.5, min(2.0, self.ratio_of_zooming * (float(new_size[0]) / float(self.previous_size[0]))))
         
         quest_line.resize_questline(new_ratio_of_zoom / self.ratio_of_zooming, new_ratio_of_zoom / self.ratio_of_zooming)
-                    
+        
+        self.background_ui_icon.resize_ui_element(new_ratio_of_zoom / self.ratio_of_zooming, new_ratio_of_zoom / self.ratio_of_zooming)
+        
         self.movement_target_position = (quest_line.position_offset[0], quest_line.position_offset[1])
         
         self.screen_size = Screen.screen.get_size()
