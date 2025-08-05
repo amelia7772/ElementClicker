@@ -7,7 +7,7 @@ pygame.init()
 
 from utilities import Screen
 
-background_image = pygame.image.load(os.path.join("assets", "images" ,"background.png")).convert_alpha()
+background_image = pygame.transform.scale(pygame.image.load(os.path.join("assets", "images" ,"background.png")).convert_alpha(), (64, 64))
 
 global is_loaded
 is_loaded = False
@@ -33,6 +33,9 @@ def load_screen(background_image: pygame.Surface):
     del loading_scene
     del clock
 
+pygame.mixer.init()
+pygame.mixer_music.load(os.path.join("assets", "music", "bonfire.ogg"))
+pygame.mixer_music.play(-1)
 loading_screen_thread = threading.Thread(target=load_screen, args=(background_image,))
 loading_screen_thread.start()
 
