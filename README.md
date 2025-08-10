@@ -1,5 +1,5 @@
 # ElementClicker
-a game I developed in python using pygame
+a game I developed in python using pygame (community edition)
 
 controls:
 
