@@ -12,6 +12,9 @@ background_image = pygame.transform.scale(pygame.image.load(os.path.join("assets
 global is_loaded
 is_loaded = False
 
+global fps
+fps = pygame.display.get_current_refresh_rate()
+
 def load_screen(background_image: pygame.Surface):
     from loading_screen.LoadingScene import LoadingScene
     clock = pygame.time.Clock()
@@ -29,7 +32,7 @@ def load_screen(background_image: pygame.Surface):
             loading_scene.number_of_loading_dots = 1
         loading_scene.update()
         pygame.display.flip()
-        clock.tick(120)
+        clock.tick(fps)
     del loading_scene
     del clock
 
@@ -163,9 +166,9 @@ while True:
             settings_scene.previous_size = settings_scene.screen_size
             credits_scene.previous_size = credits_scene.screen_size
             if event.size[0] >= 800 and event.size[1] >= 400:
-                Screen.screen = pygame.display.set_mode(event.size, pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
+                Screen.screen = pygame.display.set_mode(event.size, pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, vsync= 1)
             else:
-                Screen.screen = pygame.display.set_mode((800,400), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
+                Screen.screen = pygame.display.set_mode((800,400), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, vsync= 1)
             main_scene.resize_scene(Screen.screen.get_size())
             quest_scene.resize_scene(Screen.screen.get_size())
             marketplace_scene.resize_scene(Screen.screen.get_size())
@@ -179,10 +182,10 @@ while True:
             marketplace_scene.previous_size = Screen.screen.get_size()
             settings_scene.previous_size = Screen.screen.get_size()
             credits_scene.previous_size = Screen.screen.get_size()
-            Screen.screen = pygame.display.set_mode(pygame.display.list_modes()[0])
-            Screen.screen = pygame.display.set_mode(pygame.display.list_modes()[0], pygame.FULLSCREEN)
+            Screen.screen = pygame.display.set_mode(pygame.display.list_modes()[0], vsync= 1)
+            Screen.screen = pygame.display.set_mode(pygame.display.list_modes()[0], pygame.FULLSCREEN, vsync= 1)
         else:
-            Screen.screen = pygame.display.set_mode(main_scene.previous_size, pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
+            Screen.screen = pygame.display.set_mode(main_scene.previous_size, pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, vsync= 1)
             main_scene.previous_size = Screen.monitor_size
             quest_scene.previous_size = Screen.monitor_size
             marketplace_scene.previous_size = Screen.monitor_size
@@ -245,4 +248,4 @@ while True:
             marketplace_scene.redraw()
     
     pygame.display.flip()
-    clock.tick(120)
+    clock.tick(fps)
