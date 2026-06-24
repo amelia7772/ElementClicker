@@ -21,4 +21,4 @@ right click an element to inspect it
 
 assets made by AI and are thus non-copyrightable
 
-but everything other than assets is reserved copyright to amelia shabanya
+but everything other than assets is reserved copyright to amelia.
